@@ -7,13 +7,14 @@ static TextLayer *time_layer;
 static AppTimer *timer;
 
 static BitmapLayer *image_layer;
+static GBitmap *image_checkmark;
 static GBitmap *image_left;
 static GBitmap *image_right;
 static GBitmap *image_quad;
 static GBitmap *image_hamstring_standing;
 static GBitmap *image_lateral_thigh;
 static GBitmap *image_inner_thigh;
-static GBitmap *image_checkmark;
+static GBitmap *image_chest_and_arm;
 
 const uint16_t LENGTH_DELAY = 3;
 const uint16_t LENGTH_STRETCH = 5;
@@ -80,7 +81,13 @@ static void timer_callback(void *data) {
 			text_layer_set_text(text_layer_top, "Inner Thigh");
 			bitmap_layer_set_bitmap(image_layer, image_inner_thigh);
 			break;
-			
+		case 9:
+			text_layer_set_text(text_layer_top, "Left Chest and Arm");
+			bitmap_layer_set_bitmap(image_layer, image_chest_and_arm);
+			break;
+		case 10:
+			text_layer_set_text(text_layer_top, "Right Chest and Arm");
+			break;
 			
 		default:
 			text_layer_set_text(text_layer_top, "You are done!");
@@ -123,7 +130,7 @@ static void window_load(Window *window) {
 	text_layer_set_text_alignment(time_layer, GTextAlignmentCenter);
 	text_layer_set_font(time_layer, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
 	
-	// Image
+	// Images
 	image_checkmark = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CHECKMARK);
 	image_left = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SIDE_LUNGE_LEFT);
 	image_right = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SIDE_LUNGE_RIGHT);
@@ -131,7 +138,7 @@ static void window_load(Window *window) {
 	image_hamstring_standing = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_HAMSTRING_STANDING);
 	image_lateral_thigh = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LATERAL_THIGH);
 	image_inner_thigh = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_INNER_THIGH);
-	
+	image_chest_and_arm = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CHEST_AND_ARM);
 	
 	const GPoint center = grect_center_point(&bounds);
 	GRect image_frame = (GRect) { .origin = center, .size = image_left->bounds.size };
@@ -159,6 +166,7 @@ static void window_unload(Window *window) {
 	gbitmap_destroy(image_hamstring_standing);
 	gbitmap_destroy(image_lateral_thigh);
 	gbitmap_destroy(image_inner_thigh);
+	gbitmap_destroy(image_chest_and_arm);
 }
 
 static void init(void) {
