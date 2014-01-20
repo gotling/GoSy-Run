@@ -30,13 +30,13 @@ static void timer_callback(void *data) {
 		if (stretch == 0) {
 			round_time = LENGTH_STRETCH;
 			vibes_short_pulse();
-			text_layer_set_text(text_layer_middle, "Stretch");
+			text_layer_set_text(text_layer_top, "Stretch");
 			stretch = 1;
 		} else {
 			round++;
 			round_time = LENGTH_DELAY;      
 			vibes_long_pulse();
-			text_layer_set_text(text_layer_middle, "Prepare");
+			text_layer_set_text(text_layer_top, "Prepare");
 			stretch = 0;
 		}
 	}
@@ -49,44 +49,44 @@ static void timer_callback(void *data) {
 	
 	switch (round) {
 		case 0:
-			text_layer_set_text(text_layer_top, "Left Side Lunge");
+			text_layer_set_text(text_layer_middle, "Left Side Lunge");
 			bitmap_layer_set_bitmap(image_layer, image_left);
 			break;
 		case 1:
-			text_layer_set_text(text_layer_top, "Right Side Lunge");
+			text_layer_set_text(text_layer_middle, "Right Side Lunge");
 			bitmap_layer_set_bitmap(image_layer, image_right);
 			break;
 		case 2:
-			text_layer_set_text(text_layer_top, "Left Hamstring Standing");
+			text_layer_set_text(text_layer_middle, "Left Hamstring Standing");
 			bitmap_layer_set_bitmap(image_layer, image_hamstring_standing);
 			break;
 		case 3:
-			text_layer_set_text(text_layer_top, "Right Hamstring Standing");
+			text_layer_set_text(text_layer_middle, "Right Hamstring Standing");
 			break;
 		case 4:
-			text_layer_set_text(text_layer_top, "Left Quad");
+			text_layer_set_text(text_layer_middle, "Left Quad");
 			bitmap_layer_set_bitmap(image_layer, image_quad);
 			break;
 		case 5:
-			text_layer_set_text(text_layer_top, "Right Quad");
+			text_layer_set_text(text_layer_middle, "Right Quad");
 			break;
 		case 6:
-			text_layer_set_text(text_layer_top, "Left Lateral Thigh");
+			text_layer_set_text(text_layer_middle, "Left Lateral Thigh");
 			bitmap_layer_set_bitmap(image_layer, image_lateral_thigh);
 			break;
 		case 7:
-			text_layer_set_text(text_layer_top, "Right Lateral Thigh");
+			text_layer_set_text(text_layer_middle, "Right Lateral Thigh");
 			break;
 		case 8:
-			text_layer_set_text(text_layer_top, "Inner Thigh");
+			text_layer_set_text(text_layer_middle, "Inner Thigh");
 			bitmap_layer_set_bitmap(image_layer, image_inner_thigh);
 			break;
 		case 9:
-			text_layer_set_text(text_layer_top, "Left Chest and Arm");
+			text_layer_set_text(text_layer_middle, "Left Chest and Arm");
 			bitmap_layer_set_bitmap(image_layer, image_chest_and_arm);
 			break;
 		case 10:
-			text_layer_set_text(text_layer_top, "Right Chest and Arm");
+			text_layer_set_text(text_layer_middle, "Right Chest and Arm");
 			break;
 			
 		default:
@@ -104,7 +104,7 @@ static void timer_callback(void *data) {
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
 	vibes_short_pulse();
-	text_layer_set_text(text_layer_middle, "Prepare");
+	text_layer_set_text(text_layer_top, "Prepare");
 	timer_callback(NULL);
 }
 
@@ -116,17 +116,18 @@ static void window_load(Window *window) {
 	Layer *window_layer = window_get_root_layer(window);
 	GRect bounds = layer_get_bounds(window_layer);
 	
-	text_layer_top = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, 40 } });
-	text_layer_set_text(text_layer_top, "Press Select to start Stretch");
+	text_layer_top = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, 32 } });
+	text_layer_set_text(text_layer_top, "GoSy Run");
 	text_layer_set_text_alignment(text_layer_top, GTextAlignmentCenter);
-	text_layer_set_overflow_mode(text_layer_top, GTextOverflowModeWordWrap);
-	text_layer_set_font(text_layer_top, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
+	text_layer_set_font(text_layer_top, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
 	
-	text_layer_middle = text_layer_create((GRect) { .origin = { 0, 30 }, .size = { bounds.size.w, 40 } });
+	text_layer_middle = text_layer_create((GRect) { .origin = { 0, 28 }, .size = { bounds.size.w, 48 } });
+	text_layer_set_text(text_layer_middle, "Press Select to start Stretch");
 	text_layer_set_text_alignment(text_layer_middle, GTextAlignmentCenter);
-	text_layer_set_font(text_layer_middle, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+	text_layer_set_overflow_mode(text_layer_top, GTextOverflowModeWordWrap);
+	text_layer_set_font(text_layer_middle, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 	
-	time_layer = text_layer_create((GRect) { .origin = { 5, 85 }, .size = { 80, 49 } });
+	time_layer = text_layer_create((GRect) { .origin = { 5, 82 }, .size = { 80, 49 } });
 	text_layer_set_text_alignment(time_layer, GTextAlignmentCenter);
 	text_layer_set_font(time_layer, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
 	
