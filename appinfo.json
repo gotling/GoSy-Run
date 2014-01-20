@@ -21,6 +21,11 @@
       },
       {
         "type": "png",
+        "name": "IMAGE_CHECKMARK",
+        "file": "images/checkmark_round.png"
+      },
+      {
+        "type": "png",
         "name": "IMAGE_SIDE_LUNGE_LEFT",
         "file": "images/side-lunge-stretch-left.png"
       },
@@ -31,8 +36,23 @@
       },
       {
         "type": "png",
-        "name": "IMAGE_CHECKMARK",
-        "file": "images/checkmark_round.png"
+        "name": "IMAGE_HAMSTRING_STANDING",
+        "file": "images/hamstring-standing.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_QUAD",
+        "file": "images/quad-stretch.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_LATERAL_THIGH",
+        "file": "images/lateral-thigh.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_INNER_THIGH",
+        "file": "images/inner-thigh.png"
       }
     ]
   }

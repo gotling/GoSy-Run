@@ -9,10 +9,14 @@ static AppTimer *timer;
 static BitmapLayer *image_layer;
 static GBitmap *image_left;
 static GBitmap *image_right;
+static GBitmap *image_quad;
+static GBitmap *image_hamstring_standing;
+static GBitmap *image_lateral_thigh;
+static GBitmap *image_inner_thigh;
 static GBitmap *image_checkmark;
 
 const uint16_t LENGTH_DELAY = 3;
-const uint16_t LENGTH_STRETCH = 20;
+const uint16_t LENGTH_STRETCH = 5;
 static uint16_t round = 0;
 static uint16_t round_time = 3;
 static uint16_t stretch = 0;
@@ -44,25 +48,40 @@ static void timer_callback(void *data) {
   
   switch (round) {
     case 0:
-      text_layer_set_text(text_layer_top, "Left inner leg");
+      text_layer_set_text(text_layer_top, "Left Side Lunge");
       bitmap_layer_set_bitmap(image_layer, image_left);
       break;
     case 1:
-      text_layer_set_text(text_layer_top, "Right inner leg");
+      text_layer_set_text(text_layer_top, "Right Side Lunge");
       bitmap_layer_set_bitmap(image_layer, image_right);
       break;
     case 2:
-      text_layer_set_text(text_layer_top, "Left calf");
+      text_layer_set_text(text_layer_top, "Left Hamstring Standing");
+		  bitmap_layer_set_bitmap(image_layer, image_hamstring_standing);
       break;
     case 3:
-      text_layer_set_text(text_layer_top, "Right calf");
+      text_layer_set_text(text_layer_top, "Right Hamstring Standing");
       break;
     case 4:
-      text_layer_set_text(text_layer_top, "Left front leg");
+      text_layer_set_text(text_layer_top, "Left Quad");
+	  bitmap_layer_set_bitmap(image_layer, image_quad);
       break;
     case 5:
-      text_layer_set_text(text_layer_top, "Right front leg");
+      text_layer_set_text(text_layer_top, "Right Quad");
       break;
+	case 6:
+		  text_layer_set_text(text_layer_top, "Left Lateral Thigh");
+		  bitmap_layer_set_bitmap(image_layer, image_lateral_thigh);
+		break;
+	case 7:
+		  text_layer_set_text(text_layer_top, "Right Lateral Thigh");
+		break;
+	case 8:
+		  text_layer_set_text(text_layer_top, "Inner Thigh");
+		  bitmap_layer_set_bitmap(image_layer, image_inner_thigh);
+		break;
+
+
     default:
       text_layer_set_text(text_layer_top, "You are done!");
       text_layer_set_text(text_layer_middle, "");
@@ -105,9 +124,14 @@ static void window_load(Window *window) {
   text_layer_set_font(time_layer, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
   
   // Image
+  image_checkmark = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CHECKMARK);
   image_left = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SIDE_LUNGE_LEFT);
   image_right = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SIDE_LUNGE_RIGHT);
-  image_checkmark = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CHECKMARK);
+	image_quad = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_QUAD);
+	image_hamstring_standing = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_HAMSTRING_STANDING);
+	image_lateral_thigh = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LATERAL_THIGH);
+	image_inner_thigh = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_INNER_THIGH);
+  
   
   const GPoint center = grect_center_point(&bounds);
   GRect image_frame = (GRect) { .origin = center, .size = image_left->bounds.size };
@@ -128,9 +152,13 @@ static void window_unload(Window *window) {
   text_layer_destroy(time_layer);	
 
   bitmap_layer_destroy(image_layer);
-  gbitmap_destroy(image_left);
-  gbitmap_destroy(image_right);
   gbitmap_destroy(image_checkmark);
+	gbitmap_destroy(image_left);
+  gbitmap_destroy(image_right);
+	gbitmap_destroy(image_quad);
+	gbitmap_destroy(image_hamstring_standing);
+	gbitmap_destroy(image_lateral_thigh);
+	gbitmap_destroy(image_inner_thigh);
 }
 
 static void init(void) {

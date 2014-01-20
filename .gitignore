@@ -16,3 +16,4 @@
 *.exe
 *.out
 *.app
+.lock-waf_darwin_build
