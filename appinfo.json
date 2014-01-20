@@ -1,0 +1,39 @@
+{
+  "uuid": "3a0c3e5c-9fe2-4a43-b92b-b8e16dbf0ea9",
+  "shortName": "GoSy Run",
+  "longName": "GoSy Run Trainer",
+  "companyName": "Gotling System AB",
+  "versionCode": 1,
+  "versionLabel": "1.0.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": [
+      {
+        "menuIcon": true,
+        "type": "png",
+        "name": "IMAGE_MENU_ICON",
+        "file": "images/icon.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_SIDE_LUNGE_LEFT",
+        "file": "images/side-lunge-stretch-left.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_SIDE_LUNGE_RIGHT",
+        "file": "images/side-lunge-stretch-right.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_CHECKMARK",
+        "file": "images/checkmark_round.png"
+      }
+    ]
+  }
+}
