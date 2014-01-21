@@ -17,7 +17,8 @@ static GBitmap *image_inner_thigh;
 static GBitmap *image_chest_and_arm;
 
 const uint16_t LENGTH_DELAY = 3;
-const uint16_t LENGTH_STRETCH = 5;
+const uint16_t LENGTH_STRETCH = 20;
+static uint16_t running = 0;
 static uint16_t round = 0;
 static uint16_t round_time = 3;
 static uint16_t stretch = 0;
@@ -103,9 +104,24 @@ static void timer_callback(void *data) {
 }
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-	vibes_short_pulse();
-	text_layer_set_text(text_layer_top, "Prepare");
-	timer_callback(NULL);
+	if (running) {
+		running = 0;
+		app_timer_cancel(timer);
+		
+		text_layer_set_text(text_layer_top, "PAUSED");
+	} else {
+		running = 1;
+		vibes_short_pulse();
+		
+		if (stretch) {
+			text_layer_set_text(text_layer_top, "Prepare");
+		} else {
+			text_layer_set_text(text_layer_top, "Prepare");
+		}
+		
+		timer_callback(NULL);
+	}
+
 }
 
 static void click_config_provider(void *context) {
