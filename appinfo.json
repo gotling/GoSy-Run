@@ -53,6 +53,11 @@
         "type": "png",
         "name": "IMAGE_CHEST_AND_ARM",
         "file": "images/chest_and_arm.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_CALF",
+        "file": "images/calf.png"
       }
     ]
   }
