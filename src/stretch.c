@@ -56,28 +56,28 @@ static void update_ui() {
 			text_layer_set_text(ui.middle_text, "Right Quad");
 			break;
 		case 6:
-			text_layer_set_text(ui.middle_text, "Left Lateral Thigh");
-			bitmap_layer_set_bitmap(ui.image, image.lateral_thigh);
-			break;
-		case 7:
-			text_layer_set_text(ui.middle_text, "Right Lateral Thigh");
-			break;
-		case 8:
-			text_layer_set_text(ui.middle_text, "Inner Thigh");
-			bitmap_layer_set_bitmap(ui.image, image.inner_thigh);
-			break;
-		case 9:
 			text_layer_set_text(ui.middle_text, "Left Chest and Arm");
 			bitmap_layer_set_bitmap(ui.image, image.chest_and_arm);
 			break;
-		case 10:
+		case 7:
 			text_layer_set_text(ui.middle_text, "Right Chest and Arm");
 			break;
-		case 11:
+		case 8:
 			text_layer_set_text(ui.middle_text, "Left Calf");
 			break;
-		case 12:
+		case 9:
 			text_layer_set_text(ui.middle_text, "Right Calf");
+		case 10:
+			text_layer_set_text(ui.middle_text, "Left Lateral Thigh");
+			bitmap_layer_set_bitmap(ui.image, image.lateral_thigh);
+			break;
+		case 11:
+			text_layer_set_text(ui.middle_text, "Right Lateral Thigh");
+			break;
+		case 12:
+			text_layer_set_text(ui.middle_text, "Inner Thigh");
+			bitmap_layer_set_bitmap(ui.image, image.inner_thigh);
+			break;
 			
 		default:
 			text_layer_set_text(ui.top_text, "You are done!");
