@@ -32,31 +32,7 @@ static struct StretchImages {
 
 char buf[6];
 
-static void timer_callback(void *data) {
-	state.timer = app_timer_register(1000, timer_callback, NULL);
-	
-	if (state.round_time == 0) {
-		if (state.stretch == 0) {
-			state.round_time = LENGTH_STRETCH;
-			vibes_short_pulse();
-			text_layer_set_text(ui.top_text, "Stretch");
-			state.stretch = 1;
-		} else {
-			state.round++;
-			state.round_time = LENGTH_DELAY;      
-			vibes_long_pulse();
-			text_layer_set_text(ui.top_text, "Prepare");
-			state.stretch = 0;
-		}
-	}
-	
-	snprintf(buf, 6, "%d", state.round_time);
-	text_layer_set_text(ui.time_text, buf);
-	
-	//APP_LOG(APP_LOG_LEVEL_DEBUG, "Round: %d Round Time: %d Time display: %s", round, round_time, buf);
-	
-	state.round_time--;
-	
+static void update_ui() {
 	switch (state.round) {
 		case 0:
 			text_layer_set_text(ui.middle_text, "Left Side Lunge");
@@ -114,7 +90,34 @@ static void timer_callback(void *data) {
 			app_timer_cancel(state.timer);
 			break;
 	}
+}
+
+static void timer_callback(void *data) {
+	state.timer = app_timer_register(1000, timer_callback, NULL);
 	
+	if (state.round_time == 0) {
+		if (state.stretch == 0) {
+			state.round_time = LENGTH_STRETCH;
+			vibes_short_pulse();
+			text_layer_set_text(ui.top_text, "Stretch");
+			state.stretch = 1;
+		} else {
+			state.round++;
+			state.round_time = LENGTH_DELAY;      
+			vibes_long_pulse();
+			text_layer_set_text(ui.top_text, "Prepare");
+			state.stretch = 0;
+			
+			update_ui();
+		}
+	}
+	
+	snprintf(buf, 6, "%d", state.round_time);
+	text_layer_set_text(ui.time_text, buf);
+	
+	//APP_LOG(APP_LOG_LEVEL_DEBUG, "Round: %d Round Time: %d Time display: %s", round, round_time, buf);
+	
+	state.round_time--;
 }
 
 static void start() {
@@ -146,6 +149,8 @@ static void reset() {
 	state.round = 0;
 	state.round_time = LENGTH_DELAY;
 	state.stretch = 0;
+	
+	update_ui();
 }
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
