@@ -28,6 +28,7 @@ static struct StretchImages {
 	GBitmap *lateral_thigh;
 	GBitmap *inner_thigh;
 	GBitmap *chest_and_arm;
+	GBitmap *calf;
 } image;
 
 char buf[6];
@@ -64,9 +65,11 @@ static void update_ui() {
 			break;
 		case 8:
 			text_layer_set_text(ui.middle_text, "Left Calf");
+			bitmap_layer_set_bitmap(ui.image, image.calf);
 			break;
 		case 9:
 			text_layer_set_text(ui.middle_text, "Right Calf");
+			break;
 		case 10:
 			text_layer_set_text(ui.middle_text, "Left Lateral Thigh");
 			bitmap_layer_set_bitmap(ui.image, image.lateral_thigh);
@@ -87,6 +90,7 @@ static void update_ui() {
 			bitmap_layer_set_bitmap(ui.image, image.checkmark);
 			
 			vibes_double_pulse();
+			state.running = 0;
 			app_timer_cancel(state.timer);
 			break;
 	}
@@ -111,13 +115,12 @@ static void timer_callback(void *data) {
 			update_ui();
 		}
 	}
-	
-	snprintf(buf, 6, "%d", state.round_time);
-	text_layer_set_text(ui.time_text, buf);
-	
-	//APP_LOG(APP_LOG_LEVEL_DEBUG, "Round: %d Round Time: %d Time display: %s", round, round_time, buf);
-	
-	state.round_time--;
+
+	if (state.running) {
+		snprintf(buf, 6, "%d", state.round_time);
+		text_layer_set_text(ui.time_text, buf);
+		state.round_time--;
+	}
 }
 
 static void start() {
@@ -192,6 +195,7 @@ static void window_load(Window *window) {
 	image.lateral_thigh = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LATERAL_THIGH);
 	image.inner_thigh = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_INNER_THIGH);
 	image.chest_and_arm = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CHEST_AND_ARM);
+	image.calf = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CALF);
 	
 	GRect image_frame = (GRect) { .origin = grect_center_point(&bounds), .size = image.checkmark->bounds.size };
 	image_frame.origin.x = 72;
@@ -216,6 +220,7 @@ static void window_unload(Window *window) {
 	gbitmap_destroy(image.lateral_thigh);
 	gbitmap_destroy(image.inner_thigh);
 	gbitmap_destroy(image.chest_and_arm);
+	gbitmap_destroy(image.calf);
 	
 	reset();
 	window_destroy(window);
