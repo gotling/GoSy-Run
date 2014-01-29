@@ -31,11 +31,6 @@
       },
       {
         "type": "png",
-        "name": "IMAGE_SIDE_LUNGE_RIGHT",
-        "file": "images/side-lunge-stretch-right.png"
-      },
-      {
-        "type": "png",
         "name": "IMAGE_HAMSTRING_STANDING",
         "file": "images/hamstring-standing.png"
       },

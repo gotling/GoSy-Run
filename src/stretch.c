@@ -20,11 +20,9 @@ static struct StretchState {
 	uint16_t stretch;
 } state;
 
-
 static struct StretchImages {
 	GBitmap *checkmark;
 	GBitmap *left;
-	GBitmap *right;
 	GBitmap *quad;
 	GBitmap *hamstring_standing;
 	GBitmap *lateral_thigh;
@@ -65,7 +63,6 @@ static void timer_callback(void *data) {
 			break;
 		case 1:
 			text_layer_set_text(ui.middle_text, "Right Side Lunge");
-			bitmap_layer_set_bitmap(ui.image, image.right);
 			break;
 		case 2:
 			text_layer_set_text(ui.middle_text, "Left Hamstring Standing");
@@ -178,7 +175,6 @@ static void window_load(Window *window) {
 	// Images
 	image.checkmark = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CHECKMARK);
 	image.left = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SIDE_LUNGE_LEFT);
-	image.right = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SIDE_LUNGE_RIGHT);
 	image.quad = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_QUAD);
 	image.hamstring_standing = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_HAMSTRING_STANDING);
 	image.lateral_thigh = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LATERAL_THIGH);
@@ -209,7 +205,6 @@ static void window_unload(Window *window) {
 	
 	gbitmap_destroy(image.checkmark);
 	gbitmap_destroy(image.left);
-	gbitmap_destroy(image.right);
 	gbitmap_destroy(image.quad);
 	gbitmap_destroy(image.hamstring_standing);
 	gbitmap_destroy(image.lateral_thigh);
