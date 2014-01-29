@@ -22,7 +22,7 @@ static struct StretchState {
 
 static struct StretchImages {
 	GBitmap *checkmark;
-	GBitmap *left;
+	GBitmap *side_lunge;
 	GBitmap *quad;
 	GBitmap *hamstring_standing;
 	GBitmap *lateral_thigh;
@@ -59,7 +59,7 @@ static void timer_callback(void *data) {
 	switch (state.round) {
 		case 0:
 			text_layer_set_text(ui.middle_text, "Left Side Lunge");
-			bitmap_layer_set_bitmap(ui.image, image.left);
+			bitmap_layer_set_bitmap(ui.image, image.side_lunge);
 			break;
 		case 1:
 			text_layer_set_text(ui.middle_text, "Right Side Lunge");
@@ -174,7 +174,7 @@ static void window_load(Window *window) {
 	
 	// Images
 	image.checkmark = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CHECKMARK);
-	image.left = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SIDE_LUNGE_LEFT);
+	image.side_lunge = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SIDE_LUNGE_LEFT);
 	image.quad = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_QUAD);
 	image.hamstring_standing = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_HAMSTRING_STANDING);
 	image.lateral_thigh = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LATERAL_THIGH);
@@ -204,7 +204,7 @@ static void window_unload(Window *window) {
 	bitmap_layer_destroy(ui.image);
 	
 	gbitmap_destroy(image.checkmark);
-	gbitmap_destroy(image.left);
+	gbitmap_destroy(image.side_lunge);
 	gbitmap_destroy(image.quad);
 	gbitmap_destroy(image.hamstring_standing);
 	gbitmap_destroy(image.lateral_thigh);
