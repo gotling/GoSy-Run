@@ -114,7 +114,7 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
 		vibes_short_pulse();
 		
 		if (stretch) {
-			text_layer_set_text(text_layer_top, "Prepare");
+			text_layer_set_text(text_layer_top, "Stretch");
 		} else {
 			text_layer_set_text(text_layer_top, "Prepare");
 		}
