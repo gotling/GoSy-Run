@@ -8,7 +8,8 @@ static struct StretchUi {
 	Window *window;
 	TextLayer *top_text;
 	TextLayer *middle_text;
-	TextLayer *time_text;	
+	TextLayer *time_text;
+	BitmapLayer *image;
 } ui;
 
 static struct StretchState {
@@ -19,7 +20,6 @@ static struct StretchState {
 	uint16_t stretch;
 } state;
 
-static BitmapLayer *image_layer;
 static GBitmap *image_checkmark;
 static GBitmap *image_left;
 static GBitmap *image_right;
@@ -58,40 +58,40 @@ static void timer_callback(void *data) {
 	switch (state.round) {
 		case 0:
 			text_layer_set_text(ui.middle_text, "Left Side Lunge");
-			bitmap_layer_set_bitmap(image_layer, image_left);
+			bitmap_layer_set_bitmap(ui.image, image_left);
 			break;
 		case 1:
 			text_layer_set_text(ui.middle_text, "Right Side Lunge");
-			bitmap_layer_set_bitmap(image_layer, image_right);
+			bitmap_layer_set_bitmap(ui.image, image_right);
 			break;
 		case 2:
 			text_layer_set_text(ui.middle_text, "Left Hamstring Standing");
-			bitmap_layer_set_bitmap(image_layer, image_hamstring_standing);
+			bitmap_layer_set_bitmap(ui.image, image_hamstring_standing);
 			break;
 		case 3:
 			text_layer_set_text(ui.middle_text, "Right Hamstring Standing");
 			break;
 		case 4:
 			text_layer_set_text(ui.middle_text, "Left Quad");
-			bitmap_layer_set_bitmap(image_layer, image_quad);
+			bitmap_layer_set_bitmap(ui.image, image_quad);
 			break;
 		case 5:
 			text_layer_set_text(ui.middle_text, "Right Quad");
 			break;
 		case 6:
 			text_layer_set_text(ui.middle_text, "Left Lateral Thigh");
-			bitmap_layer_set_bitmap(image_layer, image_lateral_thigh);
+			bitmap_layer_set_bitmap(ui.image, image_lateral_thigh);
 			break;
 		case 7:
 			text_layer_set_text(ui.middle_text, "Right Lateral Thigh");
 			break;
 		case 8:
 			text_layer_set_text(ui.middle_text, "Inner Thigh");
-			bitmap_layer_set_bitmap(image_layer, image_inner_thigh);
+			bitmap_layer_set_bitmap(ui.image, image_inner_thigh);
 			break;
 		case 9:
 			text_layer_set_text(ui.middle_text, "Left Chest and Arm");
-			bitmap_layer_set_bitmap(image_layer, image_chest_and_arm);
+			bitmap_layer_set_bitmap(ui.image, image_chest_and_arm);
 			break;
 		case 10:
 			text_layer_set_text(ui.middle_text, "Right Chest and Arm");
@@ -102,7 +102,7 @@ static void timer_callback(void *data) {
 			text_layer_set_text(ui.middle_text, "");
 			text_layer_set_text(ui.time_text, "");
 			
-			bitmap_layer_set_bitmap(image_layer, image_checkmark);
+			bitmap_layer_set_bitmap(ui.image, image_checkmark);
 			vibes_double_pulse();
 			app_timer_cancel(state.timer);
 			break;
@@ -187,12 +187,12 @@ static void window_load(Window *window) {
 	image_frame.origin.x = 72;
 	image_frame.origin.y = 80;
 	
-	image_layer = bitmap_layer_create(image_frame);
+	ui.image = bitmap_layer_create(image_frame);
 	
 	layer_add_child(window_layer, text_layer_get_layer(ui.middle_text));
 	layer_add_child(window_layer, text_layer_get_layer(ui.top_text));
 	layer_add_child(window_layer, text_layer_get_layer(ui.time_text));
-	layer_add_child(window_layer, bitmap_layer_get_layer(image_layer));
+	layer_add_child(window_layer, bitmap_layer_get_layer(ui.image));
 	
 	reset();
 	start();
@@ -203,7 +203,7 @@ static void window_unload(Window *window) {
 	text_layer_destroy(ui.middle_text);
 	text_layer_destroy(ui.time_text);	
 	
-	bitmap_layer_destroy(image_layer);
+	bitmap_layer_destroy(ui.image);
 	gbitmap_destroy(image_checkmark);
 	gbitmap_destroy(image_left);
 	gbitmap_destroy(image_right);
