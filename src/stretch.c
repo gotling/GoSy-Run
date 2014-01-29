@@ -31,6 +31,7 @@ static struct StretchImages {
 } image;
 
 char buf[6];
+
 static void timer_callback(void *data) {
 	state.timer = app_timer_register(1000, timer_callback, NULL);
 	
@@ -158,21 +159,21 @@ static void window_load(Window *window) {
 	GRect bounds = layer_get_bounds(window_layer);
 	
 	ui.top_text = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, 32 } });
-	//text_layer_set_text(ui.top_text, "Stretch Timer");
 	text_layer_set_text_alignment(ui.top_text, GTextAlignmentCenter);
 	text_layer_set_font(ui.top_text, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+	layer_add_child(window_layer, text_layer_get_layer(ui.top_text));
 	
 	ui.middle_text = text_layer_create((GRect) { .origin = { 0, 28 }, .size = { bounds.size.w, 48 } });
-	//text_layer_set_text(ui.middle_text, "Press Select to start");
 	text_layer_set_text_alignment(ui.middle_text, GTextAlignmentCenter);
 	text_layer_set_overflow_mode(ui.top_text, GTextOverflowModeWordWrap);
 	text_layer_set_font(ui.middle_text, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
+	layer_add_child(window_layer, text_layer_get_layer(ui.middle_text));
 	
 	ui.time_text = text_layer_create((GRect) { .origin = { 5, 82 }, .size = { 80, 49 } });
 	text_layer_set_text_alignment(ui.time_text, GTextAlignmentCenter);
 	text_layer_set_font(ui.time_text, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
+	layer_add_child(window_layer, text_layer_get_layer(ui.time_text));
 	
-	// Images
 	image.checkmark = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CHECKMARK);
 	image.side_lunge = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SIDE_LUNGE_LEFT);
 	image.quad = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_QUAD);
@@ -181,16 +182,10 @@ static void window_load(Window *window) {
 	image.inner_thigh = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_INNER_THIGH);
 	image.chest_and_arm = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CHEST_AND_ARM);
 	
-	const GPoint center = grect_center_point(&bounds);
-	GRect image_frame = (GRect) { .origin = center, .size = image.checkmark->bounds.size };
+	GRect image_frame = (GRect) { .origin = grect_center_point(&bounds), .size = image.checkmark->bounds.size };
 	image_frame.origin.x = 72;
 	image_frame.origin.y = 80;
-	
 	ui.image = bitmap_layer_create(image_frame);
-	
-	layer_add_child(window_layer, text_layer_get_layer(ui.middle_text));
-	layer_add_child(window_layer, text_layer_get_layer(ui.top_text));
-	layer_add_child(window_layer, text_layer_get_layer(ui.time_text));
 	layer_add_child(window_layer, bitmap_layer_get_layer(ui.image));
 	
 	reset();
