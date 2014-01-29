@@ -11,7 +11,13 @@ static struct StretchUi {
 	TextLayer *time_text;	
 } ui;
 
-static AppTimer *timer;
+static struct StretchState {
+	AppTimer *timer;
+	uint16_t running;
+	uint16_t round;
+	uint16_t round_time;
+	uint16_t stretch;
+} state;
 
 static BitmapLayer *image_layer;
 static GBitmap *image_checkmark;
@@ -23,38 +29,33 @@ static GBitmap *image_lateral_thigh;
 static GBitmap *image_inner_thigh;
 static GBitmap *image_chest_and_arm;
 
-static uint16_t running = 0;
-static uint16_t round = 0;
-static uint16_t round_time = LENGTH_DELAY_START;
-static uint16_t stretch = 0;
-
 char buf[6];
 static void timer_callback(void *data) {
-	timer = app_timer_register(1000, timer_callback, NULL);
+	state.timer = app_timer_register(1000, timer_callback, NULL);
 	
-	if (round_time == 0) {
-		if (stretch == 0) {
-			round_time = LENGTH_STRETCH;
+	if (state.round_time == 0) {
+		if (state.stretch == 0) {
+			state.round_time = LENGTH_STRETCH;
 			vibes_short_pulse();
 			text_layer_set_text(ui.top_text, "Stretch");
-			stretch = 1;
+			state.stretch = 1;
 		} else {
-			round++;
-			round_time = LENGTH_DELAY;      
+			state.round++;
+			state.round_time = LENGTH_DELAY;      
 			vibes_long_pulse();
 			text_layer_set_text(ui.top_text, "Prepare");
-			stretch = 0;
+			state.stretch = 0;
 		}
 	}
 	
-	snprintf(buf, 6, "%d", round_time);
+	snprintf(buf, 6, "%d", state.round_time);
 	text_layer_set_text(ui.time_text, buf);
 	
 	//APP_LOG(APP_LOG_LEVEL_DEBUG, "Round: %d Round Time: %d Time display: %s", round, round_time, buf);
 	
-	round_time--;
+	state.round_time--;
 	
-	switch (round) {
+	switch (state.round) {
 		case 0:
 			text_layer_set_text(ui.middle_text, "Left Side Lunge");
 			bitmap_layer_set_bitmap(image_layer, image_left);
@@ -103,18 +104,18 @@ static void timer_callback(void *data) {
 			
 			bitmap_layer_set_bitmap(image_layer, image_checkmark);
 			vibes_double_pulse();
-			app_timer_cancel(timer);
+			app_timer_cancel(state.timer);
 			break;
 	}
 	
 }
 
 static void start() {
-	running = 1;
+	state.running = 1;
 	
 	vibes_short_pulse();
 	
-	if (stretch) {
+	if (state.stretch) {
 		text_layer_set_text(ui.top_text, "Stretch");
 	} else {
 		text_layer_set_text(ui.top_text, "Prepare");
@@ -124,24 +125,24 @@ static void start() {
 }
 
 static void pause() {
-	app_timer_cancel(timer);
+	app_timer_cancel(state.timer);
 	
-	running = 0;
+	state.running = 0;
 	
 	text_layer_set_text(ui.top_text, "PAUSED");
 }
 
 static void reset() {
-	app_timer_cancel(timer);
+	app_timer_cancel(state.timer);
 	
-	running = 0;
-	round = 0;
-	round_time = LENGTH_DELAY;
-	stretch = 0;
+	state.running = 0;
+	state.round = 0;
+	state.round_time = LENGTH_DELAY;
+	state.stretch = 0;
 }
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-	if (running) {
+	if (state.running) {
 		pause();
 	} else {
 		start();
@@ -193,6 +194,7 @@ static void window_load(Window *window) {
 	layer_add_child(window_layer, text_layer_get_layer(ui.time_text));
 	layer_add_child(window_layer, bitmap_layer_get_layer(image_layer));
 	
+	reset();
 	start();
 }
 
