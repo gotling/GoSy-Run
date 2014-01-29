@@ -97,6 +97,11 @@ static void timer_callback(void *data) {
 		case 10:
 			text_layer_set_text(ui.middle_text, "Right Chest and Arm");
 			break;
+		case 11:
+			text_layer_set_text(ui.middle_text, "Left Calf");
+			break;
+		case 12:
+			text_layer_set_text(ui.middle_text, "Right Calf");
 			
 		default:
 			text_layer_set_text(ui.top_text, "You are done!");
@@ -104,6 +109,7 @@ static void timer_callback(void *data) {
 			text_layer_set_text(ui.time_text, "");
 			
 			bitmap_layer_set_bitmap(ui.image, image.checkmark);
+			
 			vibes_double_pulse();
 			app_timer_cancel(state.timer);
 			break;
