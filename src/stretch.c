@@ -1,5 +1,7 @@
 #include <pebble.h>
 
+#define LENGTH_DELAY_START 3
+
 static Window *window;
 static TextLayer *text_layer_top;
 static TextLayer *text_layer_middle;
@@ -20,7 +22,7 @@ const uint16_t LENGTH_DELAY = 3;
 const uint16_t LENGTH_STRETCH = 20;
 static uint16_t running = 0;
 static uint16_t round = 0;
-static uint16_t round_time = 3;
+static uint16_t round_time = LENGTH_DELAY_START;
 static uint16_t stretch = 0;
 
 char buf[6];
@@ -43,8 +45,9 @@ static void timer_callback(void *data) {
 	}
 	
 	snprintf(buf, 6, "%d", round_time);
-	APP_LOG(APP_LOG_LEVEL_DEBUG, "Round: %d Round Time: %d Time display: %s", round, round_time, buf);
 	text_layer_set_text(time_layer, buf);
+	
+	//APP_LOG(APP_LOG_LEVEL_DEBUG, "Round: %d Round Time: %d Time display: %s", round, round_time, buf);
 	
 	round_time--;
 	
@@ -103,25 +106,43 @@ static void timer_callback(void *data) {
 	
 }
 
+static void start() {
+	running = 1;
+	
+	vibes_short_pulse();
+	
+	if (stretch) {
+		text_layer_set_text(text_layer_top, "Stretch");
+	} else {
+		text_layer_set_text(text_layer_top, "Prepare");
+	}
+	
+	timer_callback(NULL);
+}
+
+static void pause() {
+	app_timer_cancel(timer);
+	
+	running = 0;
+	
+	text_layer_set_text(text_layer_top, "PAUSED");
+}
+
+static void reset() {
+	app_timer_cancel(timer);
+	
+	running = 0;
+	round = 0;
+	round_time = LENGTH_DELAY;
+	stretch = 0;
+}
+
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
 	if (running) {
-		running = 0;
-		app_timer_cancel(timer);
-		
-		text_layer_set_text(text_layer_top, "PAUSED");
+		pause();
 	} else {
-		running = 1;
-		vibes_short_pulse();
-		
-		if (stretch) {
-			text_layer_set_text(text_layer_top, "Stretch");
-		} else {
-			text_layer_set_text(text_layer_top, "Prepare");
-		}
-		
-		timer_callback(NULL);
+		start();
 	}
-
 }
 
 static void click_config_provider(void *context) {
@@ -133,12 +154,12 @@ static void window_load(Window *window) {
 	GRect bounds = layer_get_bounds(window_layer);
 	
 	text_layer_top = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, 32 } });
-	text_layer_set_text(text_layer_top, "Stretch Timer");
+	//text_layer_set_text(text_layer_top, "Stretch Timer");
 	text_layer_set_text_alignment(text_layer_top, GTextAlignmentCenter);
 	text_layer_set_font(text_layer_top, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
 	
 	text_layer_middle = text_layer_create((GRect) { .origin = { 0, 28 }, .size = { bounds.size.w, 48 } });
-	text_layer_set_text(text_layer_middle, "Press Select to start");
+	//text_layer_set_text(text_layer_middle, "Press Select to start");
 	text_layer_set_text_alignment(text_layer_middle, GTextAlignmentCenter);
 	text_layer_set_overflow_mode(text_layer_top, GTextOverflowModeWordWrap);
 	text_layer_set_font(text_layer_middle, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
@@ -168,6 +189,8 @@ static void window_load(Window *window) {
 	layer_add_child(window_layer, text_layer_get_layer(text_layer_top));
 	layer_add_child(window_layer, text_layer_get_layer(time_layer));
 	layer_add_child(window_layer, bitmap_layer_get_layer(image_layer));
+	
+	start();
 }
 
 static void window_unload(Window *window) {
@@ -184,6 +207,9 @@ static void window_unload(Window *window) {
 	gbitmap_destroy(image_lateral_thigh);
 	gbitmap_destroy(image_inner_thigh);
 	gbitmap_destroy(image_chest_and_arm);
+	
+	reset();
+	window_destroy(window);
 }
 
 void stretch_init(void) {

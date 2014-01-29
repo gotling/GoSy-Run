@@ -23,13 +23,13 @@ static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t secti
 
 static int16_t menu_get_header_height_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
 	// This is a define provided in pebble.h that you may use for the default height
-	return 0;//MENU_CELL_BASIC_HEADER_HEIGHT;
+	return MENU_CELL_BASIC_HEADER_HEIGHT;
 }
 
 static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, uint16_t section_index, void *data) {
 	switch (section_index) {
 		case 0:
-			//menu_cell_basic_header_draw(ctx, cell_layer, "GoSy Run");
+			menu_cell_basic_header_draw(ctx, cell_layer, "Stretch Timer");
 			break;
 	}
 }
@@ -39,7 +39,7 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					menu_cell_basic_draw(ctx, cell_layer, "Stretch Timer", NULL, NULL);
+					menu_cell_basic_draw(ctx, cell_layer, "Start", NULL, NULL);
 					break;
 			}
 			break;
@@ -96,6 +96,5 @@ void menu_init(void) {
 }
 
 void menu_deinit(void) {
-	stretch_deinit();
 	window_destroy(window);
 }
