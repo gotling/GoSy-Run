@@ -133,12 +133,12 @@ static void window_load(Window *window) {
 	GRect bounds = layer_get_bounds(window_layer);
 	
 	text_layer_top = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, 32 } });
-	text_layer_set_text(text_layer_top, "GoSy Run");
+	text_layer_set_text(text_layer_top, "Stretch Timer");
 	text_layer_set_text_alignment(text_layer_top, GTextAlignmentCenter);
 	text_layer_set_font(text_layer_top, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
 	
 	text_layer_middle = text_layer_create((GRect) { .origin = { 0, 28 }, .size = { bounds.size.w, 48 } });
-	text_layer_set_text(text_layer_middle, "Press Select to start Stretch");
+	text_layer_set_text(text_layer_middle, "Press Select to start");
 	text_layer_set_text_alignment(text_layer_middle, GTextAlignmentCenter);
 	text_layer_set_overflow_mode(text_layer_top, GTextOverflowModeWordWrap);
 	text_layer_set_font(text_layer_middle, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
@@ -186,7 +186,7 @@ static void window_unload(Window *window) {
 	gbitmap_destroy(image_chest_and_arm);
 }
 
-static void init(void) {
+void stretch_init(void) {
 	window = window_create();
 	window_set_click_config_provider(window, click_config_provider);
 	window_set_window_handlers(window, (WindowHandlers) {
@@ -197,15 +197,6 @@ static void init(void) {
 	window_stack_push(window, animated);
 }
 
-static void deinit(void) {
+void stretch_deinit(void) {
 	window_destroy(window);
-}
-
-int main(void) {
-	init();
-	
-	APP_LOG(APP_LOG_LEVEL_DEBUG, "Done initializing, pushed window: %p", window);
-	
-	app_event_loop();
-	deinit();
 }
