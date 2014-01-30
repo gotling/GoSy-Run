@@ -92,6 +92,7 @@ static void update_ui() {
 			vibes_double_pulse();
 			state.running = 0;
 			app_timer_cancel(state.timer);
+			state.timer = NULL;
 			break;
 	}
 }
@@ -138,7 +139,10 @@ static void start() {
 }
 
 static void pause() {
-	app_timer_cancel(state.timer);
+	if (state.timer != NULL) {
+		app_timer_cancel(state.timer);
+		state.timer = NULL;
+	}
 	
 	state.running = 0;
 	
@@ -146,7 +150,10 @@ static void pause() {
 }
 
 static void reset() {
-	app_timer_cancel(state.timer);
+	if (state.timer != NULL) {
+		app_timer_cancel(state.timer);
+		state.timer = NULL;
+	}
 	
 	state.running = 0;
 	state.round = 0;
