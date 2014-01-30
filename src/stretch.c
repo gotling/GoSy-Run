@@ -57,11 +57,11 @@ static void update_ui() {
 			text_layer_set_text(ui.middle_text, "Right Quad");
 			break;
 		case 6:
-			text_layer_set_text(ui.middle_text, "Left Chest and Arm");
+			text_layer_set_text(ui.middle_text, "Left Chest\nand Arm");
 			bitmap_layer_set_bitmap(ui.image, image.chest_and_arm);
 			break;
 		case 7:
-			text_layer_set_text(ui.middle_text, "Right Chest and Arm");
+			text_layer_set_text(ui.middle_text, "Right Chest\nand Arm");
 			break;
 		case 8:
 			text_layer_set_text(ui.middle_text, "Left Calf");
@@ -71,11 +71,11 @@ static void update_ui() {
 			text_layer_set_text(ui.middle_text, "Right Calf");
 			break;
 		case 10:
-			text_layer_set_text(ui.middle_text, "Left Lateral Thigh");
+			text_layer_set_text(ui.middle_text, "Left\nLateral Thigh");
 			bitmap_layer_set_bitmap(ui.image, image.lateral_thigh);
 			break;
 		case 11:
-			text_layer_set_text(ui.middle_text, "Right Lateral Thigh");
+			text_layer_set_text(ui.middle_text, "Right\nLateral Thigh");
 			break;
 		case 12:
 			text_layer_set_text(ui.middle_text, "Inner Thigh");
@@ -177,13 +177,12 @@ static void window_load(Window *window) {
 	text_layer_set_font(ui.top_text, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
 	layer_add_child(window_layer, text_layer_get_layer(ui.top_text));
 	
-	ui.middle_text = text_layer_create((GRect) { .origin = { 0, 28 }, .size = { bounds.size.w, 48 } });
+	ui.middle_text = text_layer_create((GRect) { .origin = { 0, 32 }, .size = { bounds.size.w, 52 } });
 	text_layer_set_text_alignment(ui.middle_text, GTextAlignmentCenter);
 	text_layer_set_overflow_mode(ui.top_text, GTextOverflowModeWordWrap);
 	text_layer_set_font(ui.middle_text, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
-	layer_add_child(window_layer, text_layer_get_layer(ui.middle_text));
-	
-	ui.time_text = text_layer_create((GRect) { .origin = { 5, 82 }, .size = { 80, 49 } });
+
+	ui.time_text = text_layer_create((GRect) { .origin = { 5, 84 }, .size = { 80, 49 } });
 	text_layer_set_text_alignment(ui.time_text, GTextAlignmentCenter);
 	text_layer_set_font(ui.time_text, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
 	layer_add_child(window_layer, text_layer_get_layer(ui.time_text));
@@ -197,11 +196,12 @@ static void window_load(Window *window) {
 	image.chest_and_arm = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CHEST_AND_ARM);
 	image.calf = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CALF);
 	
-	GRect image_frame = (GRect) { .origin = grect_center_point(&bounds), .size = image.checkmark->bounds.size };
+	GRect image_frame = (GRect) { .size = image.checkmark->bounds.size };
 	image_frame.origin.x = 72;
-	image_frame.origin.y = 80;
+	image_frame.origin.y = 84;
 	ui.image = bitmap_layer_create(image_frame);
 	layer_add_child(window_layer, bitmap_layer_get_layer(ui.image));
+	layer_add_child(window_layer, text_layer_get_layer(ui.middle_text));
 	
 	reset();
 	start();
