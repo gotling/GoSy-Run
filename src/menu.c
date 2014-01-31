@@ -1,8 +1,9 @@
 #include <pebble.h>
 #include "stretch.h"
 
-#define NUM_MENU_SECTIONS 1
+#define NUM_MENU_SECTIONS 2
 #define NUM_FIRST_MENU_ITEMS 1
+#define NUM_SECOND_MENU_ITEMS 2
 
 static Window *window;
 static TextLayer *header;
@@ -16,6 +17,8 @@ static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t secti
 	switch (section_index) {
 		case 0:
 			return NUM_FIRST_MENU_ITEMS;
+		case 1:
+			return NUM_SECOND_MENU_ITEMS;
 		default:
 			return 0;
 	}
@@ -31,6 +34,9 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 		case 0:
 			menu_cell_basic_header_draw(ctx, cell_layer, "Stretch Timer");
 			break;
+		case 1:
+			menu_cell_basic_header_draw(ctx, cell_layer, "Interval Timer");
+			break;
 	}
 }
 
@@ -43,14 +49,38 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 					break;
 			}
 			break;
+		case 1:
+			switch (cell_index->row) {
+				case 0:
+					menu_cell_basic_draw(ctx, cell_layer, "Start", NULL, NULL);
+					break;
+				case 1:
+					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
+					break;
+
+				default:
+					break;
+			}
+			break;
+
 	}
 }
 
 void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
-	switch (cell_index->row) {
+	switch (cell_index->section) {
 		case 0:
-			// Open stretch Window
-			stretch_init();
+			switch (cell_index->row) {
+				case 0:
+					// Open stretch Window
+					stretch_init();
+					break;
+			}
+			break;
+		case 1:
+			switch (cell_index->row) {
+				case 0:
+					break;
+			}
 			break;
 	}
 }
