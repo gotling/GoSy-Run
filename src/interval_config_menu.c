@@ -2,9 +2,9 @@
 #include "entry.h"
 #include "interval_config.h"
 
-#define NUM_MENU_SECTIONS 1
-#define NUM_FIRST_MENU_ITEMS 4
-#define NUM_SECOND_MENU_ITEMS 0
+#define NUM_MENU_SECTIONS 2
+#define NUM_FIRST_MENU_ITEMS 3
+#define NUM_SECOND_MENU_ITEMS 2
 
 static Window *window;
 static TextLayer *header;
@@ -36,7 +36,7 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 			menu_cell_basic_header_draw(ctx, cell_layer, "General");
 			break;
 		case 1:
-			menu_cell_basic_header_draw(ctx, cell_layer, "Profiles");
+			menu_cell_basic_header_draw(ctx, cell_layer, "Extended Rest");
 			break;
 	}
 }
@@ -48,19 +48,29 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					snprintf(subbuf, 12, "%d seconds", workout);
+					snprintf(subbuf, 12, "%d seconds", interval_workout_time);
 					menu_cell_basic_draw(ctx, cell_layer, "Workout", subbuf, NULL);
 					break;
 				case 1:
-					menu_cell_basic_draw(ctx, cell_layer, "Rest", "20 seconds", NULL);
+					snprintf(subbuf, 12, "%d seconds", interval_rest_time);
+					menu_cell_basic_draw(ctx, cell_layer, "Rest", subbuf, NULL);
 					break;
 				case 2:
-					menu_cell_basic_draw(ctx, cell_layer, "Rounds", "15", NULL);
+					snprintf(subbuf, 12, "%d", interval_rounds);
+					menu_cell_basic_draw(ctx, cell_layer, "Repeat", subbuf, NULL);
 					break;
-				case 3:
-					menu_cell_basic_draw(ctx, cell_layer, "Extended Rest", "60 seconds/5 rounds", NULL);
+			}
+			break;
+		case 1:
+			switch (cell_index->row) {
+				case 0:
+					snprintf(subbuf, 12, "%d seconds", interval_extended_rest_time);
+					menu_cell_basic_draw(ctx, cell_layer, "Time", subbuf, NULL);
 					break;
-
+				case 1:
+					snprintf(subbuf, 12, "%d rounds", interval_extended_rest_rounds);
+					menu_cell_basic_draw(ctx, cell_layer, "Every", subbuf, NULL);
+					break;
 			}
 			break;
 	}

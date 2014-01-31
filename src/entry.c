@@ -58,7 +58,7 @@ static void window_load(Window *window) {
 	text_layer_set_font(ui.title_text, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
 	layer_add_child(window_layer, text_layer_get_layer(ui.title_text));
 	
-	state.entry = workout;
+	state.entry = interval_workout_time;
 	snprintf(buf, 6, "%d", state.entry);
 	
 	ui.entry_text = text_layer_create((GRect) { .origin = { 0, 64 }, .size = { bounds.size.w, 28 }});
@@ -72,7 +72,7 @@ static void window_unload(Window *window) {
 	text_layer_destroy(ui.title_text);
 	text_layer_destroy(ui.entry_text);
 
-	workout = state.entry;
+	interval_workout_time = state.entry;
 }
 
 void entry_init(void) {

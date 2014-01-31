@@ -1,7 +1,7 @@
 #include "interval_config.h"
 
-int workout = 45;
-int rest;
-int rounds;
-int extended_rest_time;
-int extended_rest_rounds;
+int interval_workout_time = 45;
+int interval_rest_time = 20;
+int interval_rounds = 15;
+int interval_extended_rest_time = 60;
+int interval_extended_rest_rounds = 5;
