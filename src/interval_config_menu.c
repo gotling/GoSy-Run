@@ -1,11 +1,10 @@
 #include <pebble.h>
-#include "stretch.h"
+#include "entry.h"
 #include "interval_config.h"
-#include "interval_config_menu.h"
 
-#define NUM_MENU_SECTIONS 2
-#define NUM_FIRST_MENU_ITEMS 1
-#define NUM_SECOND_MENU_ITEMS 2
+#define NUM_MENU_SECTIONS 1
+#define NUM_FIRST_MENU_ITEMS 4
+#define NUM_SECOND_MENU_ITEMS 0
 
 static Window *window;
 static TextLayer *header;
@@ -34,53 +33,46 @@ static int16_t menu_get_header_height_callback(MenuLayer *menu_layer, uint16_t s
 static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, uint16_t section_index, void *data) {
 	switch (section_index) {
 		case 0:
-			menu_cell_basic_header_draw(ctx, cell_layer, "Stretch Timer");
+			menu_cell_basic_header_draw(ctx, cell_layer, "General");
 			break;
 		case 1:
-			menu_cell_basic_header_draw(ctx, cell_layer, "Interval Timer");
+			menu_cell_basic_header_draw(ctx, cell_layer, "Profiles");
 			break;
 	}
 }
+
+static char subbuf[12];
 
 static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
 	switch (cell_index->section) {
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					menu_cell_basic_draw(ctx, cell_layer, "Start", NULL, NULL);
-					break;
-			}
-			break;
-		case 1:
-			switch (cell_index->row) {
-				case 0:
-					menu_cell_basic_draw(ctx, cell_layer, "Start", NULL, NULL);
+					snprintf(subbuf, 12, "%d seconds", workout);
+					menu_cell_basic_draw(ctx, cell_layer, "Workout", subbuf, NULL);
 					break;
 				case 1:
-					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
+					menu_cell_basic_draw(ctx, cell_layer, "Rest", "20 seconds", NULL);
+					break;
+				case 2:
+					menu_cell_basic_draw(ctx, cell_layer, "Rounds", "15", NULL);
+					break;
+				case 3:
+					menu_cell_basic_draw(ctx, cell_layer, "Extended Rest", "60 seconds/5 rounds", NULL);
 					break;
 
-				default:
-					break;
 			}
 			break;
-
 	}
 }
+
 
 static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
 	switch (cell_index->section) {
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					stretch_init();
-					break;
-			}
-			break;
-		case 1:
-			switch (cell_index->row) {
-				case 1:
-					interval_config_menu_init();
+					entry_init2("Workout");
 					break;
 			}
 			break;
@@ -90,9 +82,9 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 static void window_load(Window *window) {
 	Layer *window_layer = window_get_root_layer(window);
 	GRect bounds = layer_get_frame(window_layer);
-
+	
 	header = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, 32 } });
-	text_layer_set_text(header, "GoSy Run");
+	text_layer_set_text(header, "Interval Config");
 	text_layer_set_text_alignment(header, GTextAlignmentCenter);
 	text_layer_set_font(header, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
 	layer_add_child(window_layer, text_layer_get_layer(header));
@@ -110,13 +102,12 @@ static void window_load(Window *window) {
 	layer_add_child(window_layer, menu_layer_get_layer(menu_layer));
 }
 
-
 static void window_unload(Window *window) {
 	text_layer_destroy(header);
 	menu_layer_destroy(menu_layer);
 }
 
-void menu_init(void) {
+void interval_config_menu_init(void) {
 	window = window_create();
 	//window_set_click_config_provider(window, click_config_provider);
 	window_set_window_handlers(window, (WindowHandlers) {
@@ -127,6 +118,6 @@ void menu_init(void) {
 	window_stack_push(window, animated);
 }
 
-void menu_deinit(void) {
+void interval_config_menu_deinit(void) {
 	window_destroy(window);
 }
