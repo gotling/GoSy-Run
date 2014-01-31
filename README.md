@@ -14,9 +14,9 @@ Planned
 History
 ----------------
 1.1
-Update to support FW RC1
-Added menu to prepare for new functions
-Hamstring stretch added
+* Update to support FW RC1
+* Added menu to prepare for new functions
+* Hamstring stretch added
 
 1.0
-Initial Version
+* Initial Version
