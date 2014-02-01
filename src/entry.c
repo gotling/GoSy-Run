@@ -2,6 +2,12 @@
 #include "entry.h"
 #include "interval_config.h"
 
+static GBitmap *action_icon_plus;
+static GBitmap *action_icon_confirm;
+static GBitmap *action_icon_minus;
+
+static ActionBarLayer *action_bar;
+
 static struct EntryUi {
 	Window *window;
 	TextLayer *title_text;
@@ -54,6 +60,15 @@ static void click_config_provider(void* context) {
 static void window_load(Window *window) {
 	Layer *window_layer = window_get_root_layer(window);
 	GRect bounds = layer_get_bounds(window_layer);
+	bounds.size.w = bounds.size.w - ACTION_BAR_WIDTH -3;
+	
+	action_bar = action_bar_layer_create();
+	action_bar_layer_add_to_window(action_bar, ui.window);
+	action_bar_layer_set_click_config_provider(action_bar, click_config_provider);
+
+	action_bar_layer_set_icon(action_bar, BUTTON_ID_UP, action_icon_plus);
+	action_bar_layer_set_icon(action_bar, BUTTON_ID_SELECT, action_icon_confirm);
+	action_bar_layer_set_icon(action_bar, BUTTON_ID_DOWN, action_icon_minus);
 	
 	ui.title_text = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, 62 }});
 	text_layer_set_text(ui.title_text, ui.title);
@@ -72,9 +87,19 @@ static void window_load(Window *window) {
 static void window_unload(Window *window) {
 	text_layer_destroy(ui.title_text);
 	text_layer_destroy(ui.entry_text);
+	
+	gbitmap_destroy(action_icon_plus);
+	gbitmap_destroy(action_icon_confirm);
+	gbitmap_destroy(action_icon_minus);
+	
+	action_bar_layer_destroy(action_bar);
 }
 
 static void entry_init(void) {
+	action_icon_plus = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_ACTION_ICON_PLUS);
+	action_icon_confirm = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_ACTION_ICON_CONFIRM);
+	action_icon_minus = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_ACTION_ICON_MINUS);
+	
 	ui.window = window_create();
 	window_set_click_config_provider(ui.window, click_config_provider);
 	window_set_window_handlers(ui.window, (WindowHandlers) {
