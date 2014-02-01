@@ -1,5 +1,6 @@
 #include <pebble.h>
 #include "stretch.h"
+#include "interval.h"
 #include "interval_config.h"
 #include "interval_config_menu.h"
 
@@ -79,6 +80,10 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 			break;
 		case 1:
 			switch (cell_index->row) {
+				case 0:
+					interval_init();
+					break;
+
 				case 1:
 					interval_config_menu_init();
 					break;
