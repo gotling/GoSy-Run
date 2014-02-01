@@ -26,7 +26,6 @@ static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t secti
 }
 
 static int16_t menu_get_header_height_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
-	// This is a define provided in pebble.h that you may use for the default height
 	return MENU_CELL_BASIC_HEADER_HEIGHT;
 }
 
@@ -138,7 +137,6 @@ static void window_unload(Window *window) {
 
 void interval_config_menu_init(void) {
 	window = window_create();
-	//window_set_click_config_provider(window, click_config_provider);
 	window_set_window_handlers(window, (WindowHandlers) {
 		.load = window_load,
 		.unload = window_unload,
