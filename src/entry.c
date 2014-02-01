@@ -35,16 +35,17 @@ static void down_click_handler(ClickRecognizerRef recognizer, void* context) {
 	}
 }
 
-//static void select_click_handler(ClickRecognizerRef recognizer, void* context) {
-//}
+static void select_click_handler(ClickRecognizerRef recognizer, void* context) {
+	window_stack_pop(true);
+}
 
 static void click_config_provider(void* context) {
 	const uint16_t repeat_interval_ms = 100;
 	window_set_click_context(BUTTON_ID_UP, context);
 	window_single_repeating_click_subscribe(BUTTON_ID_UP, repeat_interval_ms, up_click_handler);
 	
-	//window_set_click_context(BUTTON_ID_SELECT, context);
-	//window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
+	window_set_click_context(BUTTON_ID_SELECT, context);
+	window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
 	
 	window_set_click_context(BUTTON_ID_DOWN, context);
 	window_single_repeating_click_subscribe(BUTTON_ID_DOWN, repeat_interval_ms, down_click_handler);
