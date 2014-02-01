@@ -2,8 +2,6 @@
 #include "entry.h"
 #include "interval_config.h"
 
-#define STEP 5
-
 static struct EntryUi {
 	Window *window;
 	TextLayer *title_text;
@@ -12,24 +10,28 @@ static struct EntryUi {
 } ui;
 
 static struct EntryState {
-	int entry;
+	int *entry;
+	int step;
+	char *format;
 } state;
 
-static char buf[6];
+static char buf[12];
 
-static void up_click_handler(ClickRecognizerRef recognizer, void* context) {
-	state.entry += STEP;
-	snprintf(buf, 6, "%d", state.entry);
+static void update_ui() {
+	snprintf(buf, 12, state.format, *state.entry);
 	text_layer_set_text(ui.entry_text, buf);
 	layer_mark_dirty(text_layer_get_layer(ui.entry_text));
 }
 
+static void up_click_handler(ClickRecognizerRef recognizer, void* context) {
+	*state.entry += state.step;
+	update_ui();
+}
+
 static void down_click_handler(ClickRecognizerRef recognizer, void* context) {
-	if (state.entry > 0) {
-		state.entry -= STEP;
-		snprintf(buf, 6, "%d", state.entry);
-		text_layer_set_text(ui.entry_text, buf);
-		layer_mark_dirty(text_layer_get_layer(ui.entry_text));
+	if (*state.entry > 0) {
+		*state.entry -= state.step;
+		update_ui();
 	}
 }
 
@@ -52,30 +54,26 @@ static void window_load(Window *window) {
 	Layer *window_layer = window_get_root_layer(window);
 	GRect bounds = layer_get_bounds(window_layer);
 	
-	ui.title_text = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, 32 }});
+	ui.title_text = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, 62 }});
 	text_layer_set_text(ui.title_text, ui.title);
 	text_layer_set_text_alignment(ui.title_text, GTextAlignmentCenter);
 	text_layer_set_font(ui.title_text, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
 	layer_add_child(window_layer, text_layer_get_layer(ui.title_text));
 	
-	state.entry = interval_workout_time;
-	snprintf(buf, 6, "%d", state.entry);
-	
 	ui.entry_text = text_layer_create((GRect) { .origin = { 0, 64 }, .size = { bounds.size.w, 28 }});
-	text_layer_set_text(ui.entry_text, buf);
 	text_layer_set_text_alignment(ui.entry_text, GTextAlignmentCenter);
 	text_layer_set_font(ui.entry_text, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 	layer_add_child(window_layer, text_layer_get_layer(ui.entry_text));
+	
+	update_ui();
 }
 
 static void window_unload(Window *window) {
 	text_layer_destroy(ui.title_text);
 	text_layer_destroy(ui.entry_text);
-
-	interval_workout_time = state.entry;
 }
 
-void entry_init(void) {
+static void entry_init(void) {
 	ui.window = window_create();
 	window_set_click_config_provider(ui.window, click_config_provider);
 	window_set_window_handlers(ui.window, (WindowHandlers) {
@@ -86,8 +84,12 @@ void entry_init(void) {
 	window_stack_push(ui.window, animated);
 }
 
-void entry_init2(char *title) {
+void entry_init_number(char *title, char *format, int step, int *entry) {
 	ui.title = title;
+	state.entry = entry;
+	state.step = step;
+	state.format = format;
+	
 	entry_init();
 }
 
