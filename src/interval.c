@@ -1,6 +1,8 @@
 #include <pebble.h>
 #include "interval_config.h"
 
+enum _activity { WORKOUT, REST, EXTENDE_REST, FINISHED, PAUSED };
+
 static struct IntervalUi {
 	Window *window;
 	TextLayer *top_text;
@@ -11,10 +13,11 @@ static struct IntervalUi {
 
 static struct IntervalState {
 	AppTimer *timer;
-	uint16_t running;
+	bool active;
 	uint16_t round;
 	uint16_t round_time;
-	bool workout;
+	enum _activity activity;
+	enum _activity paused_activity;
 } state;
 
 static struct IntervalImages {
@@ -24,65 +27,94 @@ static struct IntervalImages {
 static char buf[12];
 static char timebuf[12];
 
+// When changing from workout to rest or vise verse
 static void update_ui() {
-	if (state.round < interval_rounds) {
-		snprintf(buf, 12, "Round %d/%d", state.round + 1, interval_rounds);
+	if (state.activity == WORKOUT || state.activity == REST 
+		|| state.activity == EXTENDE_REST) {
+		snprintf(buf, 12, "Round %d/%d", state.round, interval_rounds);
 		text_layer_set_text(ui.middle_text, buf);
-		
-		snprintf(timebuf, 12, "%d", state.round_time);
-		text_layer_set_text(ui.time_text, timebuf);
-	} else {
-		text_layer_set_text(ui.top_text, "You are done!");
-		text_layer_set_text(ui.middle_text, "");
-		text_layer_set_text(ui.time_text, "");
-		
-		bitmap_layer_set_bitmap(ui.image, image.checkmark);
-		
-		vibes_double_pulse();
-		state.running = 0;
-		app_timer_cancel(state.timer);
-		state.timer = NULL;
 	}
+	
+	switch (state.activity) {
+		case WORKOUT:
+			text_layer_set_text(ui.top_text, "Workout");
+			break;
+		case REST:
+			text_layer_set_text(ui.top_text, "Rest");
+			break;
+		case EXTENDE_REST:
+			text_layer_set_text(ui.top_text, "Extended Rest");
+			break;
+		case PAUSED:
+			text_layer_set_text(ui.top_text, "PAUSED");
+			break;
+		case FINISHED:
+			text_layer_set_text(ui.top_text, "You are done!");
+			text_layer_set_text(ui.middle_text, "");
+			text_layer_set_text(ui.time_text, "");
+			bitmap_layer_set_bitmap(ui.image, image.checkmark);
+			break;
+
+		default:
+			break;
+	}
+}
+
+// Every second
+static void update_time_ui() {
+	snprintf(timebuf, 12, "%d", state.round_time);
+	text_layer_set_text(ui.time_text, timebuf);
 }
 
 static void timer_callback(void *data) {
 	state.timer = app_timer_register(1000, timer_callback, NULL);
-	
+
+	// Switch between states 
 	if (state.round_time == 0) {
-		if (state.workout) {
-			if ((state.round + 1 ) % interval_extended_rest_rounds != 0) {
-				text_layer_set_text(ui.top_text, "Rest");
-				state.round_time = interval_rest_time;
+		if (state.round < interval_rounds) {
+			if (state.activity == WORKOUT) {
+				if (state.round % interval_extended_rest_rounds != 0) {
+					state.activity = REST;
+					state.round_time = interval_rest_time;
+				} else {
+					state.activity = EXTENDE_REST;
+					state.round_time = interval_extended_rest_time;
+				}
+				
+				vibes_short_pulse();
 			} else {
-				text_layer_set_text(ui.top_text, "Extended Rest");
-				state.round_time = interval_extended_rest_time;
+				state.activity = WORKOUT;
+				state.round++;
+				state.round_time = interval_workout_time;      
+				vibes_long_pulse();
 			}
-			
-			vibes_short_pulse();
-			state.workout = false;
 		} else {
-			state.round++;
-			state.round_time = interval_workout_time;      
-			vibes_long_pulse();
-			text_layer_set_text(ui.top_text, "Workout");
-			state.workout = true;
+			state.activity = FINISHED;
+			vibes_double_pulse();
+			state.active = false;
+			app_timer_cancel(state.timer);
+			state.timer = NULL;
 		}
+		
+		update_ui();
 	}
 	
-	update_ui();
-	state.round_time--;
+	if (state.activity != FINISHED) {
+		update_time_ui();
+		state.round_time--;
+	}
 }
 
 static void start() {
-	state.running = 1;
+	if (state.activity == PAUSED) {
+		state.activity = state.paused_activity;
+	}
+	
+	state.active = true;
 	
 	vibes_short_pulse();
 	
-	if (state.workout) {
-		text_layer_set_text(ui.top_text, "Workout");
-	} else {
-		text_layer_set_text(ui.top_text, "Rest");
-	}
+	update_ui();
 	
 	timer_callback(NULL);
 }
@@ -93,9 +125,11 @@ static void pause() {
 		state.timer = NULL;
 	}
 	
-	state.running = 0;
+	state.active = false;
+	state.paused_activity = state.activity;
+	state.activity = PAUSED;
 	
-	text_layer_set_text(ui.top_text, "PAUSED");
+	update_ui();
 }
 
 static void reset() {
@@ -104,16 +138,16 @@ static void reset() {
 		state.timer = NULL;
 	}
 	
-	state.running = 0;
-	state.round = 0;
+	state.activity = WORKOUT;
+	state.active = false;
+	state.round = 1;
 	state.round_time = interval_workout_time;
-	state.workout = true;
 	
 	update_ui();
 }
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-	if (state.running) {
+	if (state.activity != PAUSED && state.activity != FINISHED) {
 		pause();
 	} else {
 		start();
