@@ -8,6 +8,7 @@ static struct IntervalUi {
 	TextLayer *top_text;
 	TextLayer *middle_text;
 	TextLayer *time_text;
+	TextLayer *total_time_text;
 	BitmapLayer *image;
 } ui;
 
@@ -16,6 +17,7 @@ static struct IntervalState {
 	bool active;
 	uint16_t round;
 	uint16_t round_time;
+	uint16_t total_time;
 	enum _activity activity;
 	enum _activity paused_activity;
 } state;
@@ -25,7 +27,12 @@ static struct IntervalImages {
 } image;
 
 static char buf[12];
-static char timebuf[12];
+static char timebuf[20];
+
+static void update_time() {
+	state.round_time--;
+	state.total_time++;
+}
 
 // When changing from workout to rest or vise verse
 static void update_ui() {
@@ -60,10 +67,23 @@ static void update_ui() {
 	}
 }
 
+static char* format_time(int seconds) {
+	char *formated_time = (char *) malloc(sizeof(char) * 7);
+	if (seconds < 60) {
+		snprintf(formated_time, 7, "%d", seconds);
+	} else {
+		snprintf(formated_time, 7, "%d:%02d", seconds / 60, (seconds % 60));
+	}
+	
+	return formated_time;
+}
+
 // Every second
 static void update_time_ui() {
-	snprintf(timebuf, 12, "%d", state.round_time);
-	text_layer_set_text(ui.time_text, timebuf);
+	text_layer_set_text(ui.time_text, format_time(state.round_time));
+	
+	snprintf(timebuf, sizeof timebuf, "Total time: %s", format_time(state.total_time));
+	text_layer_set_text(ui.total_time_text, timebuf);
 }
 
 static void timer_callback(void *data) {
@@ -101,7 +121,7 @@ static void timer_callback(void *data) {
 	
 	if (state.activity != FINISHED) {
 		update_time_ui();
-		state.round_time--;
+		update_time();
 	}
 }
 
@@ -167,22 +187,27 @@ static void window_load(Window *window) {
 	text_layer_set_font(ui.top_text, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
 	layer_add_child(window_layer, text_layer_get_layer(ui.top_text));
 	
-	ui.middle_text = text_layer_create((GRect) { .origin = { 0, 32 }, .size = { bounds.size.w, 52 } });
+	ui.middle_text = text_layer_create((GRect) { .origin = { 0, 32 }, .size = { bounds.size.w, 26 } });
 	text_layer_set_text_alignment(ui.middle_text, GTextAlignmentCenter);
 	text_layer_set_overflow_mode(ui.top_text, GTextOverflowModeWordWrap);
 	text_layer_set_font(ui.middle_text, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 	layer_add_child(window_layer, text_layer_get_layer(ui.middle_text));
 
-	ui.time_text = text_layer_create((GRect) { .origin = { 5, 84 }, .size = { 80, 49 } });
+	ui.time_text = text_layer_create((GRect) { .origin = { 0, 58 }, .size = { bounds.size.w, 44 } });
 	text_layer_set_text_alignment(ui.time_text, GTextAlignmentCenter);
-	text_layer_set_font(ui.time_text, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
+	text_layer_set_font(ui.time_text, fonts_get_system_font(FONT_KEY_BITHAM_42_MEDIUM_NUMBERS));
 	layer_add_child(window_layer, text_layer_get_layer(ui.time_text));
+	
+	ui.total_time_text = text_layer_create((GRect) { .origin = { 0, bounds.size.h - 36 }, .size = { bounds.size.w, 34 } });
+	text_layer_set_text_alignment(ui.total_time_text, GTextAlignmentCenter);
+	text_layer_set_font(ui.time_text, fonts_get_system_font(FONT_KEY_BITHAM_34_MEDIUM_NUMBERS));
+	layer_add_child(window_layer, text_layer_get_layer(ui.total_time_text));
 	
 	image.checkmark = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CHECKMARK);
 	
 	GRect image_frame = (GRect) { .size = image.checkmark->bounds.size };
-	image_frame.origin.x = 72;
-	image_frame.origin.y = 84;
+	image_frame.origin.x = (bounds.size.w / 2) - 32;
+	image_frame.origin.y = (bounds.size.h / 2) - 32;
 	ui.image = bitmap_layer_create(image_frame);
 	layer_add_child(window_layer, bitmap_layer_get_layer(ui.image));
 	
