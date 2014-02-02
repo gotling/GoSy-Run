@@ -128,10 +128,15 @@ void menu_init(void) {
 		.load = window_load,
 		.unload = window_unload,
 	});
+	
+	interval_read_persistent();
+	
 	const bool animated = true;
 	window_stack_push(window, animated);
 }
 
 void menu_deinit(void) {
+	interval_write_persistent();
+	
 	window_destroy(window);
 }
