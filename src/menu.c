@@ -42,12 +42,15 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 	}
 }
 
+static char subbuf[24];
+
 static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
 	switch (cell_index->section) {
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					menu_cell_basic_draw(ctx, cell_layer, "Start", NULL, NULL);
+					snprintf(subbuf, sizeof subbuf, "Workout %d / Rest %d", interval_workout_time, interval_rest_time);
+					menu_cell_basic_draw(ctx, cell_layer, "Start", subbuf, NULL);
 					break;
 				case 1:
 					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
