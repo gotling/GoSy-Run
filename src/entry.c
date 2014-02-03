@@ -35,7 +35,7 @@ static void up_click_handler(ClickRecognizerRef recognizer, void* context) {
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void* context) {
-	if (*state.entry > 0) {
+	if (*state.entry - state.step > 0) {
 		*state.entry -= state.step;
 		update_ui();
 	}
