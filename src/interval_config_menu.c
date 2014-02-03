@@ -133,6 +133,8 @@ static void window_load(Window *window) {
 static void window_unload(Window *window) {
 	text_layer_destroy(header);
 	menu_layer_destroy(menu_layer);
+	
+	window_destroy(window);
 }
 
 void interval_config_menu_init(void) {

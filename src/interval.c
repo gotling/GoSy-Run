@@ -27,7 +27,6 @@ static struct IntervalImages {
 } image;
 
 static char buf[12];
-static char timebuf[20];
 
 static void update_time() {
 	state.round_time--;
@@ -67,8 +66,7 @@ static void update_ui() {
 	}
 }
 
-static char* format_time(int seconds) {
-	char *formated_time = (char *) malloc(sizeof(char) * 7);
+static char *format_time(char *formated_time, int seconds) {
 	if (seconds < 60) {
 		snprintf(formated_time, 7, "%d", seconds);
 	} else {
@@ -78,12 +76,16 @@ static char* format_time(int seconds) {
 	return formated_time;
 }
 
+static char timebuf0[7];
+static char timebuf1[7];
+static char timebuf2[20];
+
 // Every second
 static void update_time_ui() {
-	text_layer_set_text(ui.time_text, format_time(state.round_time));
+	text_layer_set_text(ui.time_text, format_time(timebuf0, state.round_time));
 	
-	snprintf(timebuf, sizeof timebuf, "Total time: %s", format_time(state.total_time));
-	text_layer_set_text(ui.total_time_text, timebuf);
+	snprintf(timebuf2, sizeof timebuf2, "Total time: %s", format_time(timebuf1, state.total_time));
+	text_layer_set_text(ui.total_time_text, timebuf2);
 }
 
 static void timer_callback(void *data) {
@@ -216,14 +218,16 @@ static void window_load(Window *window) {
 }
 
 static void window_unload(Window *window) {
+	reset();
+	
 	text_layer_destroy(ui.top_text);
 	text_layer_destroy(ui.middle_text);
-	text_layer_destroy(ui.time_text);	
+	text_layer_destroy(ui.time_text);
+	text_layer_destroy(ui.total_time_text);
 	bitmap_layer_destroy(ui.image);
 	
 	gbitmap_destroy(image.checkmark);
 	
-	reset();
 	window_destroy(window);
 }
 

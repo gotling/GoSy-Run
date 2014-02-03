@@ -93,6 +93,8 @@ static void window_unload(Window *window) {
 	gbitmap_destroy(action_icon_minus);
 	
 	action_bar_layer_destroy(action_bar);
+	
+	window_destroy(window);
 }
 
 static void entry_init(void) {
