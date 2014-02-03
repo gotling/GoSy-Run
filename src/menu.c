@@ -5,8 +5,8 @@
 #include "interval_config_menu.h"
 
 #define NUM_MENU_SECTIONS 2
-#define NUM_FIRST_MENU_ITEMS 1
-#define NUM_SECOND_MENU_ITEMS 2
+#define NUM_FIRST_MENU_ITEMS 2
+#define NUM_SECOND_MENU_ITEMS 1
 
 static Window *window;
 static TextLayer *header;
@@ -28,17 +28,16 @@ static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t secti
 }
 
 static int16_t menu_get_header_height_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
-	// This is a define provided in pebble.h that you may use for the default height
 	return MENU_CELL_BASIC_HEADER_HEIGHT;
 }
 
 static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, uint16_t section_index, void *data) {
 	switch (section_index) {
 		case 0:
-			menu_cell_basic_header_draw(ctx, cell_layer, "Stretch Timer");
+			menu_cell_basic_header_draw(ctx, cell_layer, "Interval Timer");
 			break;
 		case 1:
-			menu_cell_basic_header_draw(ctx, cell_layer, "Interval Timer");
+			menu_cell_basic_header_draw(ctx, cell_layer, "Stretch Timer");
 			break;
 	}
 }
@@ -50,6 +49,12 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 				case 0:
 					menu_cell_basic_draw(ctx, cell_layer, "Start", NULL, NULL);
 					break;
+				case 1:
+					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
+					break;
+					
+				default:
+					break;
 			}
 			break;
 		case 1:
@@ -57,15 +62,8 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 				case 0:
 					menu_cell_basic_draw(ctx, cell_layer, "Start", NULL, NULL);
 					break;
-				case 1:
-					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
-					break;
-
-				default:
-					break;
 			}
 			break;
-
 	}
 }
 
@@ -74,18 +72,18 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					stretch_init();
+					interval_init();
+					break;
+					
+				case 1:
+					interval_config_menu_init();
 					break;
 			}
 			break;
 		case 1:
 			switch (cell_index->row) {
 				case 0:
-					interval_init();
-					break;
-
-				case 1:
-					interval_config_menu_init();
+					stretch_init();
 					break;
 			}
 			break;
@@ -123,7 +121,6 @@ static void window_unload(Window *window) {
 
 void menu_init(void) {
 	window = window_create();
-	//window_set_click_config_provider(window, click_config_provider);
 	window_set_window_handlers(window, (WindowHandlers) {
 		.load = window_load,
 		.unload = window_unload,
