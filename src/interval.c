@@ -95,12 +95,12 @@ static void timer_callback(void *data) {
 	if (state.round_time == 0) {
 		if (state.round < interval_rounds) {
 			if (state.activity == WORKOUT) {
-				if (state.round % interval_extended_rest_rounds != 0) {
-					state.activity = REST;
-					state.round_time = interval_rest_time;
-				} else {
+				if (interval_extended_rest && state.round % interval_extended_rest_rounds == 0) {
 					state.activity = EXTENDE_REST;
 					state.round_time = interval_extended_rest_time;
+				} else {
+					state.activity = REST;
+					state.round_time = interval_rest_time;
 				}
 				
 				vibes_short_pulse();
@@ -164,6 +164,7 @@ static void reset() {
 	state.active = false;
 	state.round = 1;
 	state.round_time = interval_workout_time;
+	state.total_time = 0;
 	
 	update_ui();
 }
