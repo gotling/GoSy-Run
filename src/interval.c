@@ -196,14 +196,14 @@ static void window_load(Window *window) {
 	text_layer_set_font(ui.middle_text, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 	layer_add_child(window_layer, text_layer_get_layer(ui.middle_text));
 
-	ui.time_text = text_layer_create((GRect) { .origin = { 0, 58 }, .size = { bounds.size.w, 44 } });
+	ui.time_text = text_layer_create((GRect) { .origin = { 0, 58 }, .size = { bounds.size.w, 52 } });
 	text_layer_set_text_alignment(ui.time_text, GTextAlignmentCenter);
-	text_layer_set_font(ui.time_text, fonts_get_system_font(FONT_KEY_BITHAM_42_MEDIUM_NUMBERS));
+	text_layer_set_font(ui.time_text, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
 	layer_add_child(window_layer, text_layer_get_layer(ui.time_text));
 	
-	ui.total_time_text = text_layer_create((GRect) { .origin = { 0, bounds.size.h - 36 }, .size = { bounds.size.w, 34 } });
+	ui.total_time_text = text_layer_create((GRect) { .origin = { 0, bounds.size.h - 34 }, .size = { bounds.size.w, 32 } });
 	text_layer_set_text_alignment(ui.total_time_text, GTextAlignmentCenter);
-	text_layer_set_font(ui.time_text, fonts_get_system_font(FONT_KEY_BITHAM_34_MEDIUM_NUMBERS));
+	//text_layer_set_font(ui.time_text, fonts_get_system_font(FONT_KEY_BITHAM_34_MEDIUM_NUMBERS));
 	layer_add_child(window_layer, text_layer_get_layer(ui.total_time_text));
 	
 	image.checkmark = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CHECKMARK);
