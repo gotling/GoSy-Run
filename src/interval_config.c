@@ -22,7 +22,7 @@ int interval_extended_rest_time = EXTENDED_REST_TIME_DEFAULT;
 int interval_extended_rest_rounds = EXTENDED_REST_ROUNDS_DEFAULT;
 
 void interval_read_persistent() {
-	//interval_workout_time = persist_exists(WORKOUT_TIME_PKEY) ? persist_read_int(WORKOUT_TIME_PKEY) : WORKOUT_TIME_DEFAULT;
+	interval_workout_time = persist_exists(WORKOUT_TIME_PKEY) ? persist_read_int(WORKOUT_TIME_PKEY) : WORKOUT_TIME_DEFAULT;
 	interval_rest_time = persist_exists(REST_TIME_PKEY) ? persist_read_int(REST_TIME_PKEY) : REST_TIME_DEFAULT;
 	interval_rounds = persist_exists(ROUNDS_PKEY) ? persist_read_int(ROUNDS_PKEY) : ROUNDS_DEFAULT;
 	interval_extended_rest = persist_exists(EXTENDED_REST_PKEY) ? persist_read_bool(EXTENDED_REST_PKEY) : EXTENDED_REST_DEFAULT;
