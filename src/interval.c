@@ -33,6 +33,28 @@ static void update_time() {
 	state.total_time++;
 }
 
+static char *format_time(char *formated_time, int seconds) {
+	if (seconds < 60) {
+		snprintf(formated_time, 7, "%d", seconds);
+	} else {
+		snprintf(formated_time, 7, "%d:%02d", seconds / 60, (seconds % 60));
+	}
+	
+	return formated_time;
+}
+
+static char timebuf0[7];
+static char timebuf1[7];
+static char timebuf2[20];
+
+// Every second
+static void update_time_ui() {
+	text_layer_set_text(ui.time_text, format_time(timebuf0, state.round_time));
+	
+	snprintf(timebuf2, sizeof timebuf2, "Total time: %s", format_time(timebuf1, state.total_time));
+	text_layer_set_text(ui.total_time_text, timebuf2);
+}
+
 // When changing from workout to rest or vise verse
 static void update_ui() {
 	if (state.activity == WORKOUT || state.activity == REST 
@@ -57,35 +79,13 @@ static void update_ui() {
 		case FINISHED:
 			text_layer_set_text(ui.top_text, "You are done!");
 			text_layer_set_text(ui.middle_text, "");
+			update_time_ui();
 			text_layer_set_text(ui.time_text, "");
 			bitmap_layer_set_bitmap(ui.image, image.checkmark);
 			break;
-
 		default:
 			break;
 	}
-}
-
-static char *format_time(char *formated_time, int seconds) {
-	if (seconds < 60) {
-		snprintf(formated_time, 7, "%d", seconds);
-	} else {
-		snprintf(formated_time, 7, "%d:%02d", seconds / 60, (seconds % 60));
-	}
-	
-	return formated_time;
-}
-
-static char timebuf0[7];
-static char timebuf1[7];
-static char timebuf2[20];
-
-// Every second
-static void update_time_ui() {
-	text_layer_set_text(ui.time_text, format_time(timebuf0, state.round_time));
-	
-	snprintf(timebuf2, sizeof timebuf2, "Total time: %s", format_time(timebuf1, state.total_time));
-	text_layer_set_text(ui.total_time_text, timebuf2);
 }
 
 static void timer_callback(void *data) {
