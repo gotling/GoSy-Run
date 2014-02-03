@@ -49,7 +49,12 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					snprintf(subbuf, sizeof subbuf, "Workout %d / Rest %d", interval_workout_time, interval_rest_time);
+					snprintf(subbuf, sizeof subbuf, "%d / %d * %d", interval_workout_time, interval_rest_time, interval_rounds);
+					if (interval_extended_rest) {
+						char erbuf[14];
+						snprintf(erbuf, sizeof erbuf, " ER: %d %% %d", interval_extended_rest_time, interval_extended_rest_rounds);
+						strncat(subbuf, erbuf, sizeof erbuf);
+					}
 					menu_cell_basic_draw(ctx, cell_layer, "Start", subbuf, NULL);
 					break;
 				case 1:
