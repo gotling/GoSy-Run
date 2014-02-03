@@ -103,7 +103,7 @@ static void timer_callback(void *data) {
 					state.round_time = interval_rest_time;
 				}
 				
-				vibes_short_pulse();
+				vibes_long_pulse();
 			} else {
 				state.activity = WORKOUT;
 				state.round++;
@@ -119,6 +119,8 @@ static void timer_callback(void *data) {
 		}
 		
 		update_ui();
+	} else if (state.round_time <= 3) {
+		vibes_short_pulse();
 	}
 	
 	if (state.activity != FINISHED) {
