@@ -10,7 +10,7 @@ Features
 Configurable with extended rest
 
 #### Explanation of menu display
-Example: 45 / 20 * 15 ER: 60 % 5
+**Example**: 45 / 20 * 15 ER: 60 % 5
 
 Workout 45 seconds for 15 rounds with 20 seconds rest in-between.
 
