@@ -4,11 +4,12 @@
 
 #define NUM_MENU_SECTIONS 2
 #define NUM_FIRST_MENU_ITEMS 3
-#define NUM_SECOND_MENU_ITEMS 2
+#define NUM_SECOND_MENU_ITEMS 1
 
 static Window *window;
 static TextLayer *header;
 static MenuLayer *menu_layer;
+static int second_menu_items = NUM_SECOND_MENU_ITEMS;
 
 static uint16_t menu_get_num_sections_callback(MenuLayer *menu_layer, void *data) {
 	return NUM_MENU_SECTIONS;
@@ -19,7 +20,11 @@ static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t secti
 		case 0:
 			return NUM_FIRST_MENU_ITEMS;
 		case 1:
-			return NUM_SECOND_MENU_ITEMS;
+			if (interval_extended_rest) {
+				return 3;
+			} else {
+				return 1;
+			}
 		default:
 			return 0;
 	}
@@ -63,10 +68,17 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 1:
 			switch (cell_index->row) {
 				case 0:
+					if (interval_extended_rest) {
+						menu_cell_basic_draw(ctx, cell_layer, "Enabled", NULL, NULL);
+					} else {
+						menu_cell_basic_draw(ctx, cell_layer, "Disabled", NULL, NULL);
+					}
+					break;
+				case 1:
 					snprintf(subbuf, 12, "%d seconds", interval_extended_rest_time);
 					menu_cell_basic_draw(ctx, cell_layer, "Time", subbuf, NULL);
 					break;
-				case 1:
+				case 2:
 					snprintf(subbuf, 12, "%d rounds", interval_extended_rest_rounds);
 					menu_cell_basic_draw(ctx, cell_layer, "Every", subbuf, NULL);
 					break;
@@ -94,9 +106,20 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 		case 1:
 			switch (cell_index->row) {
 				case 0:
-					entry_init_number("Extended Rest", "%d seconds", 5, &interval_extended_rest_time);
+					if (interval_extended_rest) {
+						interval_extended_rest = false;
+						second_menu_items = 1;
+					} else {
+						interval_extended_rest = true;
+						second_menu_items = 3;
+					}
+					menu_layer_reload_data(menu_layer);
+					menu_layer_set_selected_index(menu_layer, menu_layer_get_selected_index(menu_layer), MenuRowAlignCenter, true);
 					break;
 				case 1:
+					entry_init_number("Extended Rest", "%d seconds", 5, &interval_extended_rest_time);
+					break;
+				case 2:
 					entry_init_number("Extended Rest Every", "%d rounds", 1, &interval_extended_rest_rounds);
 					break;
 				default:
