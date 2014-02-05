@@ -95,10 +95,10 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					entry_init_number("Workout", "%d seconds", 5, &interval_workout_time);
+					entry_init_time("Workout", &interval_workout_time);
 					break;
 				case 1:
-					entry_init_number("Rest", "%d seconds", 5, &interval_rest_time);
+					entry_init_time("Rest", &interval_rest_time);
 					break;
 				case 2:
 					entry_init_number("Rounds", "%d rounds", 1, &interval_rounds);
@@ -119,7 +119,7 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 					menu_layer_set_selected_index(menu_layer, menu_layer_get_selected_index(menu_layer), MenuRowAlignCenter, true);
 					break;
 				case 1:
-					entry_init_number("Extended Rest", "%d seconds", 5, &interval_extended_rest_time);
+					entry_init_time("Extended Rest", &interval_extended_rest_time);
 					break;
 				case 2:
 					entry_init_number("Extended Rest Every", "%d rounds", 1, &interval_extended_rest_rounds);
