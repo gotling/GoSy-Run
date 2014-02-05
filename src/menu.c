@@ -43,20 +43,35 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 	}
 }
 
-static char subbuf[24];
+static char subbuf[25];
+
+static char *interval_subtitle(char *subtitle) {
+	char workout_time_text[7];
+	format_time(workout_time_text, interval_workout_time);
+	
+	char rest_time_text[7];
+	format_time(rest_time_text, interval_rest_time);
+	
+	snprintf(subbuf, sizeof subbuf, "%s / %s * %d", workout_time_text, rest_time_text, interval_rounds);
+	
+	if (interval_extended_rest) {
+		char extended_rest_time_text[7];
+		format_time(extended_rest_time_text, interval_extended_rest_time);
+		
+		char erbuf[10];
+		snprintf(erbuf, sizeof erbuf, ", %s%%%d", extended_rest_time_text, interval_extended_rest_rounds);
+		strncat(subbuf, erbuf, sizeof erbuf);
+	}
+	
+	return subtitle;
+}
 
 static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
 	switch (cell_index->section) {
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					//format_time(workout_time_text, interval_workout_time);
-					snprintf(subbuf, sizeof subbuf, "%d / %d * %d", interval_workout_time, interval_rest_time, interval_rounds);
-					if (interval_extended_rest) {
-						char erbuf[14];
-						snprintf(erbuf, sizeof erbuf, " ER: %d %% %d", interval_extended_rest_time, interval_extended_rest_rounds);
-						strncat(subbuf, erbuf, sizeof erbuf);
-					}
+					interval_subtitle(subbuf);
 					menu_cell_basic_draw(ctx, cell_layer, "Start", subbuf, NULL);
 					break;
 				case 1:
