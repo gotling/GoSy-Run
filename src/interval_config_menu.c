@@ -1,6 +1,7 @@
 #include <pebble.h>
 #include "entry.h"
 #include "interval_config.h"
+#include "tools.h"
 
 #define NUM_MENU_SECTIONS 2
 #define NUM_FIRST_MENU_ITEMS 3
@@ -52,11 +53,12 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					snprintf(subbuf, 12, "%d seconds", interval_workout_time);
+					format_time_long(subbuf, interval_workout_time);
 					menu_cell_basic_draw(ctx, cell_layer, "Workout", subbuf, NULL);
 					break;
 				case 1:
-					snprintf(subbuf, 12, "%d seconds", interval_rest_time);
+					
+					format_time_long(subbuf, interval_rest_time);
 					menu_cell_basic_draw(ctx, cell_layer, "Rest", subbuf, NULL);
 					break;
 				case 2:
@@ -75,7 +77,7 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 					}
 					break;
 				case 1:
-					snprintf(subbuf, 12, "%d seconds", interval_extended_rest_time);
+					format_time_long(subbuf, interval_extended_rest_time);
 					menu_cell_basic_draw(ctx, cell_layer, "Time", subbuf, NULL);
 					break;
 				case 2:

@@ -3,6 +3,7 @@
 #include "interval.h"
 #include "interval_config.h"
 #include "interval_config_menu.h"
+#include "tools.h"
 
 #define NUM_MENU_SECTIONS 2
 #define NUM_FIRST_MENU_ITEMS 2
@@ -49,6 +50,7 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 0:
 			switch (cell_index->row) {
 				case 0:
+					//format_time(workout_time_text, interval_workout_time);
 					snprintf(subbuf, sizeof subbuf, "%d / %d * %d", interval_workout_time, interval_rest_time, interval_rounds);
 					if (interval_extended_rest) {
 						char erbuf[14];
