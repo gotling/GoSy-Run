@@ -10,11 +10,11 @@ Features
 Configurable with extended rest
 
 #### Explanation of menu display
-**Example**: 45 / 20 * 15 ER: 60 % 5
+**Example**: 45+20 * 15 +1:00/5
 
 Workout 45 seconds for 15 rounds with 20 seconds rest in-between.
 
-Extended rest of 60 seconds every 5th round.
+Extended rest of 1 minute every 5th round.
 
 ### Stretch timer
 With 8 stretch types
@@ -25,6 +25,9 @@ Planned
 
 History
 ----------------
+1.3 - Unreleased
+* Improve input and display of time
+
 1.2
 * Added Interval Timer
 

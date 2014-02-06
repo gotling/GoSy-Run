@@ -52,14 +52,14 @@ static char *interval_subtitle(char *subtitle) {
 	char rest_time_text[7];
 	format_time(rest_time_text, interval_rest_time);
 	
-	snprintf(subbuf, sizeof subbuf, "%s / %s * %d", workout_time_text, rest_time_text, interval_rounds);
+	snprintf(subbuf, sizeof subbuf, "%s+%s * %d", workout_time_text, rest_time_text, interval_rounds);
 	
 	if (interval_extended_rest) {
 		char extended_rest_time_text[7];
 		format_time(extended_rest_time_text, interval_extended_rest_time);
 		
 		char erbuf[10];
-		snprintf(erbuf, sizeof erbuf, ", %s%%%d", extended_rest_time_text, interval_extended_rest_rounds);
+		snprintf(erbuf, sizeof erbuf, " +%s/%d", extended_rest_time_text, interval_extended_rest_rounds);
 		strncat(subbuf, erbuf, sizeof erbuf);
 	}
 	
