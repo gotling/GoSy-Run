@@ -95,6 +95,8 @@ static void window_load(Window *window) {
 }
 
 static void window_unload(Window *window) {
+	stretch_write_persistent();
+	
 	text_layer_destroy(header);
 	menu_layer_destroy(menu_layer);
 	

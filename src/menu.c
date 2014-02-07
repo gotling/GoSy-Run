@@ -180,8 +180,5 @@ void menu_init(void) {
 }
 
 void menu_deinit(void) {
-	interval_write_persistent();
-	stretch_write_persistent();
-	
 	window_destroy(window);
 }
