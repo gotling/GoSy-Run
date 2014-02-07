@@ -27,6 +27,7 @@ History
 ----------------
 1.3 - Unreleased
 * Improve input and display of time
+* Stretch timer configurable
 
 1.2
 * Added Interval Timer
