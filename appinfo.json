@@ -39,37 +39,37 @@
       {
         "type": "png",
         "name": "IMAGE_SIDE_LUNGE_LEFT",
-        "file": "images/side-lunge-stretch-left.png"
+        "file": "images/stretch/side-lunge-stretch-left.png"
       },
       {
         "type": "png",
         "name": "IMAGE_HAMSTRING_STANDING",
-        "file": "images/hamstring-standing.png"
+        "file": "images/stretch/hamstring-standing.png"
       },
       {
         "type": "png",
         "name": "IMAGE_QUAD",
-        "file": "images/quad-stretch.png"
+        "file": "images/stretch/quad-stretch.png"
       },
       {
         "type": "png",
         "name": "IMAGE_LATERAL_THIGH",
-        "file": "images/lateral-thigh.png"
+        "file": "images/stretch/lateral-thigh.png"
       },
       {
         "type": "png",
         "name": "IMAGE_INNER_THIGH",
-        "file": "images/inner-thigh.png"
+        "file": "images/stretch/inner-thigh.png"
       },
       {
         "type": "png",
         "name": "IMAGE_CHEST_AND_ARM",
-        "file": "images/chest_and_arm.png"
+        "file": "images/stretch/chest_and_arm.png"
       },
       {
         "type": "png",
         "name": "IMAGE_CALF",
-        "file": "images/calf.png"
+        "file": "images/stretch/calf.png"
       }
     ]
   }
