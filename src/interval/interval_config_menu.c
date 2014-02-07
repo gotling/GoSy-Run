@@ -1,7 +1,7 @@
 #include <pebble.h>
 #include "interval_config.h"
-#include "../entry.h"
-#include "../tools.h"
+#include "../common/entry.h"
+#include "../common/tools.h"
 
 #define NUM_MENU_SECTIONS 2
 #define NUM_FIRST_MENU_ITEMS 3

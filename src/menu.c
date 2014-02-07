@@ -5,7 +5,7 @@
 #include "interval/interval.h"
 #include "interval/interval_config.h"
 #include "interval/interval_config_menu.h"
-#include "tools.h"
+#include "common/tools.h"
 
 #define NUM_MENU_SECTIONS 2
 #define NUM_FIRST_MENU_ITEMS 2
