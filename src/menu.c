@@ -2,9 +2,9 @@
 #include "stretch/stretch.h"
 #include "stretch/stretch_config.h"
 #include "stretch/stretch_config_menu.h"
-#include "interval.h"
-#include "interval_config.h"
-#include "interval_config_menu.h"
+#include "interval/interval.h"
+#include "interval/interval_config.h"
+#include "interval/interval_config_menu.h"
 #include "tools.h"
 
 #define NUM_MENU_SECTIONS 2

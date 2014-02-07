@@ -1,6 +1,5 @@
 #include <pebble.h>
 #include "entry.h"
-#include "interval_config.h"
 #include "tools.h"
 
 static GBitmap *action_icon_plus;
