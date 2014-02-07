@@ -1,7 +1,7 @@
 #include <pebble.h>
-#include "entry.h"
 #include "stretch_config.h"
-#include "tools.h"
+#include "../entry.h"
+#include "../tools.h"
 
 #define NUM_MENU_SECTIONS 1
 #define NUM_FIRST_MENU_ITEMS 2
