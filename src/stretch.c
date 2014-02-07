@@ -1,4 +1,5 @@
 #include <pebble.h>
+#include "stretch_config.h"
 
 #define LENGTH_DELAY_START 3
 #define LENGTH_DELAY 3
@@ -102,13 +103,13 @@ static void timer_callback(void *data) {
 	
 	if (state.round_time == 0) {
 		if (state.stretch == 0) {
-			state.round_time = LENGTH_STRETCH;
+			state.round_time = stretch_stretch_time;//LENGTH_STRETCH;
 			vibes_short_pulse();
 			text_layer_set_text(ui.top_text, "Stretch");
 			state.stretch = 1;
 		} else {
 			state.round++;
-			state.round_time = LENGTH_DELAY;      
+			state.round_time = stretch_prepare_time;//LENGTH_DELAY;      
 			vibes_long_pulse();
 			text_layer_set_text(ui.top_text, "Prepare");
 			state.stretch = 0;
@@ -157,7 +158,7 @@ static void reset() {
 	
 	state.running = 0;
 	state.round = 0;
-	state.round_time = LENGTH_DELAY;
+	state.round_time = stretch_prepare_time;//LENGTH_DELAY;
 	state.stretch = 0;
 	
 	update_ui();
