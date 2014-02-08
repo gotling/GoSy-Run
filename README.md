@@ -25,7 +25,7 @@ Planned
 
 History
 ----------------
-1.3 - Unreleased
+1.3
 * Improve input and display of time
 * Stretch timer configurable
 
