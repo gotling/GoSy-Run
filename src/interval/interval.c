@@ -1,5 +1,6 @@
 #include <pebble.h>
 #include "interval_config.h"
+#include "../common/tools.h"
 
 enum _activity { WORKOUT, REST, EXTENDE_REST, FINISHED, PAUSED };
 
@@ -31,16 +32,6 @@ static char buf[12];
 static void update_time() {
 	state.round_time--;
 	state.total_time++;
-}
-
-static char *format_time(char *formated_time, int seconds) {
-	if (seconds < 60) {
-		snprintf(formated_time, 7, "%d", seconds);
-	} else {
-		snprintf(formated_time, 7, "%d:%02d", seconds / 60, (seconds % 60));
-	}
-	
-	return formated_time;
 }
 
 static char timebuf0[7];

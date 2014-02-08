@@ -1,6 +1,6 @@
 #include <pebble.h>
 #include "entry.h"
-#include "interval_config.h"
+#include "tools.h"
 
 static GBitmap *action_icon_plus;
 static GBitmap *action_icon_confirm;
@@ -19,24 +19,51 @@ static struct EntryState {
 	int *entry;
 	int step;
 	char *format;
+	bool time_entry;
 } state;
 
 static char buf[12];
 
 static void update_ui() {
-	snprintf(buf, 12, state.format, *state.entry);
+	if (state.time_entry) {
+		format_time_long(buf, *state.entry);
+	} else {
+		snprintf(buf, 12, state.format, *state.entry);
+	}
+
 	text_layer_set_text(ui.entry_text, buf);
 	layer_mark_dirty(text_layer_get_layer(ui.entry_text));
 }
 
+static int get_time_step(bool up) {
+	if ((up && *state.entry <= 55) || (!up && *state.entry <= 60)) {
+		return 5;
+	} else if((up && *state.entry <=170) || (!up && *state.entry <=180)) {
+		return 10;
+	} else if ((up && *state.entry <= 570) || (!up && *state.entry <= 600)) {
+		return 30;
+	} else {
+		return 60;
+	}
+}
+
+static int get_step(bool up) {
+	if (state.time_entry) {
+		return get_time_step(up);
+	} else {
+		return state.step;
+	}
+
+}
+
 static void up_click_handler(ClickRecognizerRef recognizer, void* context) {
-	*state.entry += state.step;
+	*state.entry += get_step(true);
 	update_ui();
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void* context) {
-	if (*state.entry - state.step > 0) {
-		*state.entry -= state.step;
+	if (*state.entry - get_step(false) > 0) {
+		*state.entry -= get_step(false);
 		update_ui();
 	}
 }
@@ -117,6 +144,15 @@ void entry_init_number(char *title, char *format, int step, int *entry) {
 	state.entry = entry;
 	state.step = step;
 	state.format = format;
+	state.time_entry = false;
+	
+	entry_init();
+}
+
+void entry_init_time(char *title, int *entry) {
+	ui.title = title;
+	state.entry = entry;
+	state.time_entry = true;
 	
 	entry_init();
 }

@@ -1,8 +1,5 @@
 #include <pebble.h>
-
-#define LENGTH_DELAY_START 3
-#define LENGTH_DELAY 3
-#define LENGTH_STRETCH 20
+#include "stretch_config.h"
 
 static struct StretchUi {
 	Window *window;
@@ -10,6 +7,7 @@ static struct StretchUi {
 	TextLayer *middle_text;
 	TextLayer *time_text;
 	BitmapLayer *image;
+	GRect bounds;
 } ui;
 
 static struct StretchState {
@@ -84,9 +82,15 @@ static void update_ui() {
 			
 		default:
 			text_layer_set_text(ui.top_text, "You are done!");
-			text_layer_set_text(ui.middle_text, "");
-			text_layer_set_text(ui.time_text, "");
 			
+			layer_set_hidden(text_layer_get_layer(ui.middle_text), true);
+			layer_set_hidden(text_layer_get_layer(ui.time_text), true);
+			
+			Layer *image_layer = bitmap_layer_get_layer(ui.image);
+			GRect image_frame = layer_get_frame(image_layer);
+			image_frame.origin.x = (ui.bounds.size.w / 2) - 32;
+			image_frame.origin.y = (ui.bounds.size.h / 2) - 32;
+			layer_set_frame(image_layer, image_frame);
 			bitmap_layer_set_bitmap(ui.image, image.checkmark);
 			
 			vibes_double_pulse();
@@ -102,13 +106,13 @@ static void timer_callback(void *data) {
 	
 	if (state.round_time == 0) {
 		if (state.stretch == 0) {
-			state.round_time = LENGTH_STRETCH;
+			state.round_time = stretch_stretch_time;
 			vibes_short_pulse();
 			text_layer_set_text(ui.top_text, "Stretch");
 			state.stretch = 1;
 		} else {
 			state.round++;
-			state.round_time = LENGTH_DELAY;      
+			state.round_time = stretch_prepare_time;      
 			vibes_long_pulse();
 			text_layer_set_text(ui.top_text, "Prepare");
 			state.stretch = 0;
@@ -157,7 +161,7 @@ static void reset() {
 	
 	state.running = 0;
 	state.round = 0;
-	state.round_time = LENGTH_DELAY;
+	state.round_time = stretch_prepare_time;
 	state.stretch = 0;
 	
 	update_ui();
@@ -177,14 +181,14 @@ static void click_config_provider(void *context) {
 
 static void window_load(Window *window) {
 	Layer *window_layer = window_get_root_layer(window);
-	GRect bounds = layer_get_bounds(window_layer);
+	ui.bounds = layer_get_bounds(window_layer);
 	
-	ui.top_text = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, 32 } });
+	ui.top_text = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { ui.bounds.size.w, 32 } });
 	text_layer_set_text_alignment(ui.top_text, GTextAlignmentCenter);
 	text_layer_set_font(ui.top_text, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
 	layer_add_child(window_layer, text_layer_get_layer(ui.top_text));
 	
-	ui.middle_text = text_layer_create((GRect) { .origin = { 0, 32 }, .size = { bounds.size.w, 52 } });
+	ui.middle_text = text_layer_create((GRect) { .origin = { 0, 32 }, .size = { ui.bounds.size.w, 52 } });
 	text_layer_set_text_alignment(ui.middle_text, GTextAlignmentCenter);
 	text_layer_set_overflow_mode(ui.top_text, GTextOverflowModeWordWrap);
 	text_layer_set_font(ui.middle_text, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
