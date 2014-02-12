@@ -54,45 +54,12 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 
 static char subbuf[25];
 
-static char *interval_subtitle(char *subtitle) {
-	char workout_time_text[7];
-	format_time(workout_time_text, interval_workout_time);
-	
-	char rest_time_text[7];
-	format_time(rest_time_text, interval_rest_time);
-	
-	snprintf(subbuf, sizeof subbuf, "%s+%s * %d", workout_time_text, rest_time_text, interval_rounds);
-	
-	if (interval_extended_rest) {
-		char extended_rest_time_text[7];
-		format_time(extended_rest_time_text, interval_extended_rest_time);
-		
-		char erbuf[10];
-		snprintf(erbuf, sizeof erbuf, " +%s/%d", extended_rest_time_text, interval_extended_rest_rounds);
-		strncat(subbuf, erbuf, sizeof erbuf);
-	}
-	
-	return subtitle;
-}
-
-static char *stretch_subtitle(char *subtitle) {
-	char stretch_time_text[7];
-	format_time(stretch_time_text, stretch_stretch_time);
-	
-	char prepare_time_text[7];
-	format_time(prepare_time_text, stretch_prepare_time);
-	
-	snprintf(subbuf, sizeof subbuf, "%s+%s", stretch_time_text, prepare_time_text);
-	
-	return subtitle;
-}
-
 static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
 	switch (cell_index->section) {
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					interval_subtitle(subbuf);
+					interval_tostring(subbuf, sizeof subbuf);
 					menu_cell_basic_draw(ctx, cell_layer, "Start", subbuf, NULL);
 					break;
 				case 1:
@@ -106,7 +73,7 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 1:
 			switch (cell_index->row) {
 				case 0:
-					stretch_subtitle(subbuf);
+					stretch_tostring(subbuf, sizeof subbuf);
 					menu_cell_basic_draw(ctx, cell_layer, "Start", subbuf, NULL);
 					break;
 				case 1:

@@ -9,3 +9,5 @@ extern int interval_extended_rest_rounds;
 
 void interval_read_persistent();
 void interval_write_persistent();
+
+char *interval_tostring(char *output, int length);

@@ -1,4 +1,5 @@
 #include "pebble.h"
+#include "../common/tools.h"
 
 #define WORKOUT_TIME_PKEY 1
 #define REST_TIME_PKEY 2
@@ -37,4 +38,25 @@ void interval_write_persistent() {
 	persist_write_bool(EXTENDED_REST_PKEY, interval_extended_rest);
 	persist_write_int(EXTENDED_REST_TIME_PKEY, interval_extended_rest_time);
 	persist_write_int(EXTENDED_REST_ROUNDS_PKEY, interval_extended_rest_rounds);
+}
+
+char *interval_tostring(char *output, int length) {
+	char workout_time_text[7];
+	format_time(workout_time_text, interval_workout_time);
+	
+	char rest_time_text[7];
+	format_time(rest_time_text, interval_rest_time);
+	
+	snprintf(output, length, "%s+%s * %d", workout_time_text, rest_time_text, interval_rounds);
+	
+	if (interval_extended_rest) {
+		char extended_rest_time_text[7];
+		format_time(extended_rest_time_text, interval_extended_rest_time);
+		
+		char erbuf[10];
+		snprintf(erbuf, sizeof erbuf, " +%s/%d", extended_rest_time_text, interval_extended_rest_rounds);
+		strncat(output, erbuf, sizeof erbuf);
+	}
+	
+	return output;
 }

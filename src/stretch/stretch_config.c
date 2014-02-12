@@ -1,4 +1,5 @@
 #include "pebble.h"
+#include "common/tools.h"
 
 #define STRETCH_TIME_PKEY 10
 #define PREPARE_TIME_PKEY 11
@@ -17,4 +18,16 @@ void stretch_read_persistent() {
 void stretch_write_persistent() {
 	persist_write_int(STRETCH_TIME_PKEY, stretch_stretch_time);
 	persist_write_int(PREPARE_TIME_PKEY, stretch_prepare_time);
+}
+
+char *stretch_tostring(char *output, int length) {
+	char stretch_time_text[7];
+	format_time(stretch_time_text, stretch_stretch_time);
+	
+	char prepare_time_text[7];
+	format_time(prepare_time_text, stretch_prepare_time);
+	
+	snprintf(output, length, "%s+%s", stretch_time_text, prepare_time_text);
+	
+	return output;
 }
