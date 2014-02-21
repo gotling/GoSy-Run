@@ -8,6 +8,8 @@ static GBitmap *action_icon_minus;
 
 static ActionBarLayer *action_bar;
 
+static EntryType _entryType;
+
 static struct EntryUi {
 	Window *window;
 	TextLayer *title_text;
@@ -21,6 +23,8 @@ static struct EntryState {
 	char *format;
 	bool time_entry;
 } state;
+
+void (*callback_function)(void);
 
 static char buf[12];
 
@@ -48,7 +52,7 @@ static int get_time_step(bool up) {
 }
 
 static int get_step(bool up) {
-	if (state.time_entry) {
+	if (state.time_entry && !state.step) {
 		return get_time_step(up);
 	} else {
 		return state.step;
@@ -121,6 +125,10 @@ static void window_unload(Window *window) {
 	
 	action_bar_layer_destroy(action_bar);
 	
+	if(_entryType == TIME_CALLBACK) {
+		callback_function();
+	}
+
 	window_destroy(window);
 }
 
@@ -152,9 +160,25 @@ void entry_init_number(char *title, char *format, int step, int *entry) {
 void entry_init_time(char *title, int *entry) {
 	ui.title = title;
 	state.entry = entry;
+	state.step = 0;
 	state.time_entry = true;
+	_entryType = TIME;
 	
 	entry_init();
+}
+
+void entry_init_time_callback(char *title, int *entry, void (*callback)(void)) {
+	entry_init_time((char*)title, (int*)entry);
+
+	callback_function = callback;
+	_entryType = TIME_CALLBACK;
+}
+
+void entry_init_time_step(char *title, int step, int *entry) {
+	entry_init_time((char*)title, (int*)entry);
+
+	state.step = step;
+	_entryType = TIME_STEP;
 }
 
 void entry_deinit(void) {

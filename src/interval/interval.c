@@ -2,6 +2,10 @@
 #include "interval_config.h"
 #include "../common/tools.h"
 
+// DEBUG
+static time_t before_ms;
+int expected_time;
+
 enum _activity { WORKOUT, REST, EXTENDE_REST, FINISHED, PAUSED };
 
 static struct IntervalUi {
@@ -107,6 +111,14 @@ static void timer_callback(void *data) {
 			state.active = false;
 			app_timer_cancel(state.timer);
 			state.timer = NULL;
+			
+			// DEBUG
+			char exec_time[5];
+			int actual_time = (int)(time(NULL) - before_ms);
+			snprintf(exec_time, sizeof exec_time, "%d", actual_time);
+			char diff_time[5];
+			snprintf(diff_time, sizeof diff_time, "%d", actual_time - expected_time);
+			APP_LOG(APP_LOG_LEVEL_DEBUG, "Actual run time: %s s Diff: %s s", exec_time, diff_time);
 		}
 		
 		update_ui();
@@ -130,6 +142,14 @@ static void start() {
 	vibes_short_pulse();
 	
 	update_ui();
+	
+	// DEBUG
+	expected_time = (interval_workout_time * interval_rounds) + (interval_workout_time * (interval_rounds - 1));
+	char exec_time[5];
+	snprintf(exec_time, sizeof exec_time, "%d", expected_time);
+	APP_LOG(APP_LOG_LEVEL_DEBUG, "Expected run time: %s s", exec_time);	
+	
+	before_ms = time(NULL);
 	
 	timer_callback(NULL);
 }
