@@ -1,16 +1,14 @@
 #include <pebble.h>
-//#include "config.h"
+#include "config.h"
 #include "../common/tools.h"
 
 // REPEAT, SET
 
 enum _activity { WORKOUT, REST, EXTENDE_REST, FINISHED, PAUSED };
 
-static int interval_rest_time = 45;
-static int interval_repeats = 3;
-
-static int rounds = 4;
+static int rounds;
 static int round_iterator = 0;
+// TODO: Dynamic size
 static int round_time[10];
 
 static struct IntervalUi {
@@ -39,12 +37,11 @@ static struct IntervalImages {
 static char buf[15];
 
 static void set_up() {
-	// round_time = (int*)malloc(rounds);
-	round_time[0] = 120;
-	round_time[1] = 90;
-	round_time[2] = 60;
-	round_time[3] = 30;
-	// round_time = {120, 90, 60, 30};
+	rounds = fartlek_max_time / fartlek_step_time;
+
+	for (int i = 0; i < rounds; ++i) {
+		round_time[i] = fartlek_max_time - (i * fartlek_step_time);
+	}
 }
 
 static void update_time() {
@@ -68,7 +65,7 @@ static void update_time_ui() {
 static void update_ui() {
 	if (state.activity == WORKOUT || state.activity == REST 
 		|| state.activity == EXTENDE_REST) {
-		snprintf(buf, sizeof buf, "Round %d:%d/%d:%d", state.round, (round_iterator + 1), interval_repeats, rounds);
+		snprintf(buf, sizeof buf, "Round %d:%d/%d:%d", state.round, (round_iterator + 1), fartlek_rounds, rounds);
 		text_layer_set_text(ui.middle_text, buf);
 	}
 	
@@ -102,14 +99,14 @@ static void timer_callback(void *data) {
 
 	// Switch between states 
 	if (state.round_time == 0) {
-		if (state.round < interval_repeats || round_iterator < (rounds - 1)) {
+		if (state.round < fartlek_rounds || round_iterator < (rounds - 1)) {
 			if (state.activity == WORKOUT) {
 				/*if (interval_extended_rest && state.round % interval_extended_rest_rounds == 0) {
 					state.activity = EXTENDE_REST;
 					state.round_time = interval_extended_rest_time;
 				} else { */
 					state.activity = REST;
-					state.round_time = interval_rest_time;
+					state.round_time = fartlek_rest_time;
 				//}
 				
 				vibes_long_pulse();
