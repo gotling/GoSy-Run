@@ -1,11 +1,14 @@
 #pragma once
 
 typedef enum {
-	TIME,
-	TIME_CALLBACK,
-	TIME_STEP,
+	NUMBER,
+	TIME
 } EntryType;
 
+typedef enum {
+	TIME_NORMAL,
+	TIME_STEP
+} TimeType;
 
 void entry_init_number(char *title, char *format, int step, int *entry);
 void entry_init_time(char *title, int *entry);
