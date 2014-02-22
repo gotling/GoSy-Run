@@ -41,7 +41,7 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 			menu_cell_basic_header_draw(ctx, cell_layer, "General");
 			break;
 		case 1:
-			menu_cell_basic_header_draw(ctx, cell_layer, "Extended Rest");
+			menu_cell_basic_header_draw(ctx, cell_layer, "Extended Slow");
 			break;
 	}
 }
@@ -54,15 +54,15 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 			switch (cell_index->row) {
 				case 0:
 					format_time_long(subbuf, fartlek_step_time);
-					menu_cell_basic_draw(ctx, cell_layer, "Step", subbuf, NULL);
+					menu_cell_basic_draw(ctx, cell_layer, "Shortest Fast", subbuf, NULL);
 					break;
 				case 1:
 					format_time_long(subbuf, fartlek_max_time);
-					menu_cell_basic_draw(ctx, cell_layer, "Max", subbuf, NULL);
+					menu_cell_basic_draw(ctx, cell_layer, "Longest Fast", subbuf, NULL);
 					break;
 				case 2:
 					format_time_long(subbuf, fartlek_rest_time);
-					menu_cell_basic_draw(ctx, cell_layer, "Rest", subbuf, NULL);
+					menu_cell_basic_draw(ctx, cell_layer, "Slow", subbuf, NULL);
 					break;
 				case 3:
 					snprintf(subbuf, 12, "%d", fartlek_rounds);
@@ -81,10 +81,10 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 					break;
 				case 1:
 					format_time_long(subbuf, fartlek_extended_rest_time);
-					menu_cell_basic_draw(ctx, cell_layer, "Time", subbuf, NULL);
+					menu_cell_basic_draw(ctx, cell_layer, "Slow", subbuf, NULL);
 					break;
 				case 2:
-					snprintf(subbuf, 12, "%d rounds", fartlek_extended_rest_rounds);
+					snprintf(subbuf, 12, "%d repeats", fartlek_extended_rest_rounds);
 					menu_cell_basic_draw(ctx, cell_layer, "Every", subbuf, NULL);
 					break;
 			}
@@ -105,16 +105,16 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					entry_init_time_callback("Step", &fartlek_step_time, &step_updated);
+					entry_init_time_callback("Shortest Fast", &fartlek_step_time, &step_updated);
 					break;
 				case 1:
-					entry_init_time_step("Max", fartlek_step_time, &fartlek_max_time);
+					entry_init_time_step("Longest Fast", fartlek_step_time, &fartlek_max_time);
 					break;
 				case 2:
-					entry_init_time("Rest", &fartlek_rest_time);
+					entry_init_time("Slow", &fartlek_rest_time);
 					break;
 				case 3:
-					entry_init_number("Rounds", "%d rounds", 1, &fartlek_rounds);
+					entry_init_number("Repeat", "%d times", 1, &fartlek_rounds);
 					break;
 			}
 			break;
@@ -132,10 +132,10 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 					menu_layer_set_selected_index(menu_layer, menu_layer_get_selected_index(menu_layer), MenuRowAlignCenter, true);
 					break;
 				case 1:
-					entry_init_time("Extended Rest", &fartlek_extended_rest_time);
+					entry_init_time("Extended Slow", &fartlek_extended_rest_time);
 					break;
 				case 2:
-					entry_init_number("Extended Rest Every", "%d rounds", 1, &fartlek_extended_rest_rounds);
+					entry_init_number("Extended Slow Every", "%d repeats", 1, &fartlek_extended_rest_rounds);
 					break;
 				default:
 					break;
