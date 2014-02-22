@@ -93,7 +93,11 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 }
 
 static void step_updated(void) {
-	fartlek_max_time -= (fartlek_max_time % fartlek_step_time);
+	if (fartlek_max_time < fartlek_step_time) {
+		fartlek_max_time = fartlek_step_time;
+	} else {
+		fartlek_max_time -= (fartlek_max_time % fartlek_step_time);	
+	}
 }
 
 static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
