@@ -54,19 +54,37 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 	}
 }
 
-static char titbuf[25];
-static char subbuf[25];
-static char timebuf[6];
+static int16_t menu_get_cell_height_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *callback_context) {
+	switch (cell_index->section) {
+		case 0:
+			switch (cell_index->row) {
+				case 0:
+					return MENU_CELL_BASIC_MULTILINE_HEIGHT;
+			}
+		case 1:
+			switch (cell_index->row) {
+				case 0:
+					return MENU_CELL_BASIC_MULTILINE_HEIGHT;
+			}
+		case 2:
+			switch (cell_index->row) {
+				case 0:
+					return MENU_CELL_BASIC_MULTILINE_HEIGHT;
+			}
+	}
+
+	return 44;
+}
+
+static char subbuf[40];
 
 static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
 	switch (cell_index->section) {
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					format_time(timebuf, interval_get_total_time());
-					snprintf(titbuf, sizeof titbuf, "Start! (%s)", timebuf);
 					interval_tostring(subbuf, sizeof subbuf);
-					menu_cell_basic_draw(ctx, cell_layer, titbuf, subbuf, NULL);
+					menu_cell_basic_draw_multiline(ctx, cell_layer, "Start", subbuf, NULL);
 					break;
 				case 1:
 					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
@@ -79,10 +97,8 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 1:
 			switch (cell_index->row) {
 				case 0:
-					format_time(timebuf, stretch_get_total_time());
-					snprintf(titbuf, sizeof titbuf, "Start! (%s)", timebuf);
 					stretch_tostring(subbuf, sizeof subbuf);
-					menu_cell_basic_draw(ctx, cell_layer, titbuf, subbuf, NULL);
+					menu_cell_basic_draw_multiline(ctx, cell_layer, "Start", subbuf, NULL);
 					break;
 				case 1:
 					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
@@ -92,10 +108,8 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 2:
 			switch (cell_index->row) {
 				case 0:
-					format_time(timebuf, fartlek_get_total_time());
-					snprintf(titbuf, sizeof titbuf, "Start! (%s)", timebuf);
 					fartlek_tostring(subbuf, sizeof subbuf);
-					menu_cell_basic_draw(ctx, cell_layer, titbuf, subbuf, NULL);
+					menu_cell_basic_draw_multiline(ctx, cell_layer, "Start", subbuf, NULL);
 					break;
 				case 1:
 					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
@@ -157,6 +171,7 @@ static void window_load(Window *window) {
 		.get_num_sections = menu_get_num_sections_callback,
 		.get_num_rows = menu_get_num_rows_callback,
 		.get_header_height = menu_get_header_height_callback,
+		.get_cell_height = menu_get_cell_height_callback,
 		.draw_header = menu_draw_header_callback,
 		.draw_row = menu_draw_row_callback,
 		.select_click = menu_select_callback,

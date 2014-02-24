@@ -1,4 +1,6 @@
-#include "pebble.h"
+#include <pebble.h>
+#include "config.h"
+#include "../common/tools.h"
 
 #define STEP_TIME_PKEY 20
 #define MAX_TIME_PKEY 21
@@ -46,8 +48,11 @@ void fartlek_write_persistent() {
 
 
 char *fartlek_tostring(char *output, int length) {
+	char total_time_text[7];
+	format_time(total_time_text, fartlek_get_total_time());
+
 	strcpy(output, "");
-	char fatlek_text[20];
+	char fatlek_text[40];
 	//int rounds = fartlek_max_time / fartlek_step_time;
 	//int round_time[rounds];
 
@@ -58,11 +63,11 @@ char *fartlek_tostring(char *output, int length) {
 	// 		strncat(output, fatlek_text, sizeof fatlek_text);
 	// 	}
 	// }
-	snprintf(fatlek_text, sizeof fatlek_text, "%d/%d", fartlek_max_time, fartlek_step_time);
+	snprintf(fatlek_text, sizeof fatlek_text, "Total time: %s\n%d/%d+%d * %d", total_time_text, fartlek_max_time, fartlek_step_time, fartlek_rest_time, fartlek_rounds);
 	strncat(output, fatlek_text, sizeof fatlek_text);
 
-	snprintf(fatlek_text, sizeof fatlek_text, "+%d * %d", fartlek_rest_time, fartlek_rounds);
-	strncat(output, fatlek_text, sizeof fatlek_text);
+	//snprintf(fatlek_text, sizeof fatlek_text, "+%d * %d", fartlek_rest_time, fartlek_rounds);
+	//strncat(output, fatlek_text, sizeof fatlek_text);
 		
 	return output;
 }

@@ -1,4 +1,5 @@
-#include "pebble.h"
+#include <pebble.h>
+#include "stretch_config.h"
 #include "common/tools.h"
 
 #define STRETCH_TIME_PKEY 10
@@ -23,13 +24,16 @@ void stretch_write_persistent() {
 }
 
 char *stretch_tostring(char *output, int length) {
+	char total_time_text[7];
+	format_time(total_time_text, stretch_get_total_time());
+
 	char stretch_time_text[7];
 	format_time(stretch_time_text, stretch_stretch_time);
 	
 	char prepare_time_text[7];
 	format_time(prepare_time_text, stretch_prepare_time);
 	
-	snprintf(output, length, "%s+%s", stretch_time_text, prepare_time_text);
+	snprintf(output, length, "Total time: %s\n%s+%s", total_time_text, stretch_time_text, prepare_time_text);
 	
 	return output;
 }
