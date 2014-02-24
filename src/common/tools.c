@@ -22,7 +22,6 @@ char *format_time_long(char *formated_time, int seconds) {
 }
 
 void menu_cell_basic_draw_multiline(GContext* ctx, const Layer *cell_layer, char *title, char *subtitle, GBitmap *icon) {
-	//APP_LOG(APP_LOG_LEVEL_DEBUG, "Title: %s", title);
 	GRect bounds = layer_get_frame(cell_layer);
 	graphics_context_set_text_color	(ctx, GColorBlack);
 	graphics_draw_text(ctx,

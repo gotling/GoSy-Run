@@ -9,12 +9,8 @@ Features
 ### Interval timer
 Configurable with extended rest
 
-#### Explanation of menu display
-**Example**: 45+20 * 15 +1:00/5
-
-Workout 45 seconds for 15 rounds with 20 seconds rest in-between.
-
-Extended rest of 1 minute every 5th round.
+### Fartlek
+Controlled
 
 ### Stretch timer
 With 8 stretch types
@@ -25,6 +21,10 @@ Planned
 
 History
 ----------------
+1.4 - UNRELEASED
+* Added controlled Fartlek
+* Show total time in main menu
+
 1.3
 * Improve input and display of time
 * Stretch timer configurable

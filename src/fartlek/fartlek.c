@@ -4,7 +4,7 @@
 
 // REPEAT, SET
 
-enum _activity { WORKOUT, REST, EXTENDE_REST, FINISHED, PAUSED };
+enum _activity { FAST, SLOW, EXTENDED_SLOW, FINISHED, PAUSED };
 
 static int rounds;
 static int round_iterator = 0;
@@ -61,22 +61,22 @@ static void update_time_ui() {
 	text_layer_set_text(ui.total_time_text, timebuf2);
 }
 
-// When changing from workout to rest or vise verse
+// When changing from FAST to SLOW or vise verse
 static void update_ui() {
-	if (state.activity == WORKOUT || state.activity == REST 
-		|| state.activity == EXTENDE_REST) {
+	if (state.activity == FAST || state.activity == SLOW 
+		|| state.activity == EXTENDED_SLOW) {
 		snprintf(buf, sizeof buf, "Round %d:%d/%d:%d", state.round, (round_iterator + 1), fartlek_rounds, rounds);
 		text_layer_set_text(ui.middle_text, buf);
 	}
 	
 	switch (state.activity) {
-		case WORKOUT:
+		case FAST:
 			text_layer_set_text(ui.top_text, "Fast");
 			break;
-		case REST:
+		case SLOW:
 			text_layer_set_text(ui.top_text, "Slow");
 			break;
-		case EXTENDE_REST:
+		case EXTENDED_SLOW:
 			text_layer_set_text(ui.top_text, "Extended Slow");
 			break;
 		case PAUSED:
@@ -100,18 +100,18 @@ static void timer_callback(void *data) {
 	// Switch between states 
 	if (state.round_time == 0) {
 		if (state.round < fartlek_rounds || round_iterator < (rounds - 1)) {
-			if (state.activity == WORKOUT) {
-				/*if (interval_extended_rest && state.round % interval_extended_rest_rounds == 0) {
-					state.activity = EXTENDE_REST;
-					state.round_time = interval_extended_rest_time;
+			if (state.activity == FAST) {
+				/*if (interval_extended_slow && state.round % interval_extended_slow_rounds == 0) {
+					state.activity = EXTENDED_SLOW;
+					state.round_time = interval_extended_slow_time;
 				} else { */
-					state.activity = REST;
-					state.round_time = fartlek_rest_time;
+					state.activity = SLOW;
+					state.round_time = fartlek_slow_time;
 				//}
 				
 				vibes_long_pulse();
 			} else {
-				state.activity = WORKOUT;
+				state.activity = FAST;
 				
 				round_iterator++;
 				
@@ -176,7 +176,7 @@ static void reset() {
 		state.timer = NULL;
 	}
 	
-	state.activity = WORKOUT;
+	state.activity = FAST;
 	state.active = false;
 	state.round = 1;
 	state.round_time = round_time[0];
@@ -245,8 +245,6 @@ static void window_unload(Window *window) {
 	
 	gbitmap_destroy(image.checkmark);
 
-	//free(round_time);
-	
 	window_destroy(window);
 }
 

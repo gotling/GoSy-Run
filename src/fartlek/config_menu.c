@@ -21,7 +21,7 @@ static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t secti
 		case 0:
 			return NUM_FIRST_MENU_ITEMS;
 		case 1:
-			if (fartlek_extended_rest) {
+			if (fartlek_extended_slow) {
 				return 3;
 			} else {
 				return 1;
@@ -61,7 +61,7 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 					menu_cell_basic_draw(ctx, cell_layer, "Longest Fast", subbuf, NULL);
 					break;
 				case 2:
-					format_time_long(subbuf, fartlek_rest_time);
+					format_time_long(subbuf, fartlek_slow_time);
 					menu_cell_basic_draw(ctx, cell_layer, "Slow", subbuf, NULL);
 					break;
 				case 3:
@@ -73,18 +73,18 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 1:
 			switch (cell_index->row) {
 				case 0:
-					if (fartlek_extended_rest) {
+					if (fartlek_extended_slow) {
 						menu_cell_basic_draw(ctx, cell_layer, "Enabled", NULL, NULL);
 					} else {
 						menu_cell_basic_draw(ctx, cell_layer, "Disabled", NULL, NULL);
 					}
 					break;
 				case 1:
-					format_time_long(subbuf, fartlek_extended_rest_time);
+					format_time_long(subbuf, fartlek_extended_slow_time);
 					menu_cell_basic_draw(ctx, cell_layer, "Slow", subbuf, NULL);
 					break;
 				case 2:
-					snprintf(subbuf, 12, "%d repeats", fartlek_extended_rest_rounds);
+					snprintf(subbuf, 12, "%d repeats", fartlek_extended_slow_rounds);
 					menu_cell_basic_draw(ctx, cell_layer, "Every", subbuf, NULL);
 					break;
 			}
@@ -111,7 +111,7 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 					entry_init_time_step("Longest Fast", fartlek_step_time, &fartlek_max_time);
 					break;
 				case 2:
-					entry_init_time("Slow", &fartlek_rest_time);
+					entry_init_time("Slow", &fartlek_slow_time);
 					break;
 				case 3:
 					entry_init_number("Repeat", "%d times", 1, &fartlek_rounds);
@@ -121,21 +121,21 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 		case 1:
 			switch (cell_index->row) {
 				case 0:
-					if (fartlek_extended_rest) {
-						fartlek_extended_rest = false;
+					if (fartlek_extended_slow) {
+						fartlek_extended_slow = false;
 						second_menu_items = 1;
 					} else {
-						fartlek_extended_rest = true;
+						fartlek_extended_slow = true;
 						second_menu_items = 3;
 					}
 					menu_layer_reload_data(menu_layer);
 					menu_layer_set_selected_index(menu_layer, menu_layer_get_selected_index(menu_layer), MenuRowAlignCenter, true);
 					break;
 				case 1:
-					entry_init_time("Extended Slow", &fartlek_extended_rest_time);
+					entry_init_time("Extended Slow", &fartlek_extended_slow_time);
 					break;
 				case 2:
-					entry_init_number("Extended Slow Every", "%d repeats", 1, &fartlek_extended_rest_rounds);
+					entry_init_number("Extended Slow Every", "%d repeats", 1, &fartlek_extended_slow_rounds);
 					break;
 				default:
 					break;
