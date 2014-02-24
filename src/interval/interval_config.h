@@ -11,3 +11,4 @@ void interval_read_persistent();
 void interval_write_persistent();
 
 char *interval_tostring(char *output, int length);
+int interval_get_total_time();

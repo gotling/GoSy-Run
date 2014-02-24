@@ -7,6 +7,8 @@
 #define STRETCH_TIME_DEFAULT 20
 #define PREPARE_TIME_DEFAULT 3
 
+#define SETS 13
+
 int stretch_stretch_time = STRETCH_TIME_DEFAULT;
 int stretch_prepare_time = PREPARE_TIME_DEFAULT;
 
@@ -30,4 +32,14 @@ char *stretch_tostring(char *output, int length) {
 	snprintf(output, length, "%s+%s", stretch_time_text, prepare_time_text);
 	
 	return output;
+}
+
+int stretch_get_total_time() {
+	int total_time = 0;
+	
+	total_time += stretch_stretch_time;
+	total_time += stretch_prepare_time;
+	total_time *= SETS;
+
+	return total_time;
 }

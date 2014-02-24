@@ -144,7 +144,7 @@ static void start() {
 	update_ui();
 	
 	// DEBUG
-	expected_time = (interval_workout_time * interval_rounds) + (interval_workout_time * (interval_rounds - 1));
+	expected_time = interval_get_total_time();
 	char exec_time[5];
 	snprintf(exec_time, sizeof exec_time, "%d", expected_time);
 	APP_LOG(APP_LOG_LEVEL_DEBUG, "Expected run time: %s s", exec_time);	
@@ -216,7 +216,6 @@ static void window_load(Window *window) {
 	
 	ui.total_time_text = text_layer_create((GRect) { .origin = { 0, bounds.size.h - 34 }, .size = { bounds.size.w, 32 } });
 	text_layer_set_text_alignment(ui.total_time_text, GTextAlignmentCenter);
-	//text_layer_set_font(ui.time_text, fonts_get_system_font(FONT_KEY_BITHAM_34_MEDIUM_NUMBERS));
 	layer_add_child(window_layer, text_layer_get_layer(ui.total_time_text));
 	
 	image.checkmark = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CHECKMARK);

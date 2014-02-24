@@ -60,3 +60,35 @@ char *interval_tostring(char *output, int length) {
 	
 	return output;
 }
+/*
+Example
+workout 				60
+rest 					30
+rounds 					10
+extended rest ronunds 	5
+extended rest time 		60
+--------------------------
+						900
+						870
+						900
+*/
+
+
+int interval_get_total_time() {
+	int total_time = 0;
+
+	total_time += interval_workout_time;
+	total_time += interval_rest_time;
+	total_time *= interval_rounds;
+	total_time -= interval_rest_time;
+
+	if (interval_extended_rest) {
+		if (interval_rounds % interval_extended_rest_rounds == 0) {
+			total_time += ((interval_rounds / interval_extended_rest_rounds) - 1) * (interval_extended_rest_time - interval_rest_time);
+		} else {
+			total_time += (interval_rounds / interval_extended_rest_rounds) * (interval_extended_rest_time - interval_rest_time);
+		}
+	}
+
+	return total_time;
+}

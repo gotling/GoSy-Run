@@ -43,3 +43,39 @@ void fartlek_write_persistent() {
 	persist_write_int(EXTENDED_REST_TIME_PKEY, fartlek_extended_rest_time);
 	persist_write_int(EXTENDED_REST_ROUNDS_PKEY, fartlek_extended_rest_rounds);
 }
+
+
+char *fartlek_tostring(char *output, int length) {
+	strcpy(output, "");
+	char fatlek_text[20];
+	//int rounds = fartlek_max_time / fartlek_step_time;
+	//int round_time[rounds];
+
+	// for (int i = 0; i < rounds; ++i) {
+	// 	round_time[i] = fartlek_max_time - (i * fartlek_step_time);
+	// 	if(i < (rounds - 1)) {
+	// 		snprintf(fatlek_text, sizeof fatlek_text, "%d-", round_time[i]);
+	// 		strncat(output, fatlek_text, sizeof fatlek_text);
+	// 	}
+	// }
+	snprintf(fatlek_text, sizeof fatlek_text, "%d/%d", fartlek_max_time, fartlek_step_time);
+	strncat(output, fatlek_text, sizeof fatlek_text);
+
+	snprintf(fatlek_text, sizeof fatlek_text, "+%d * %d", fartlek_rest_time, fartlek_rounds);
+	strncat(output, fatlek_text, sizeof fatlek_text);
+		
+	return output;
+}
+
+int fartlek_get_total_time() {
+	int total_time = 0;
+	int rounds = fartlek_max_time / fartlek_step_time;
+	for (int i = 0; i < rounds; ++i) {
+		total_time += (fartlek_max_time - (i * fartlek_step_time));
+		total_time += fartlek_rest_time;
+	}
+	total_time *= fartlek_rounds;
+	total_time -= fartlek_rest_time;
+
+	return total_time;
+}

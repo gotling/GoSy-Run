@@ -6,6 +6,7 @@
 #include "interval/interval_config.h"
 #include "interval/interval_config_menu.h"
 #include "fartlek/fartlek.h"
+#include "fartlek/config.h"
 #include "fartlek/config_menu.h"
 #include "common/tools.h"
 
@@ -53,15 +54,19 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 	}
 }
 
+static char titbuf[25];
 static char subbuf[25];
+static char timebuf[6];
 
 static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
 	switch (cell_index->section) {
 		case 0:
 			switch (cell_index->row) {
 				case 0:
+					format_time(timebuf, interval_get_total_time());
+					snprintf(titbuf, sizeof titbuf, "Start! (%s)", timebuf);
 					interval_tostring(subbuf, sizeof subbuf);
-					menu_cell_basic_draw(ctx, cell_layer, "Start", subbuf, NULL);
+					menu_cell_basic_draw(ctx, cell_layer, titbuf, subbuf, NULL);
 					break;
 				case 1:
 					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
@@ -74,8 +79,10 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 1:
 			switch (cell_index->row) {
 				case 0:
+					format_time(timebuf, stretch_get_total_time());
+					snprintf(titbuf, sizeof titbuf, "Start! (%s)", timebuf);
 					stretch_tostring(subbuf, sizeof subbuf);
-					menu_cell_basic_draw(ctx, cell_layer, "Start", subbuf, NULL);
+					menu_cell_basic_draw(ctx, cell_layer, titbuf, subbuf, NULL);
 					break;
 				case 1:
 					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
@@ -85,7 +92,10 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 2:
 			switch (cell_index->row) {
 				case 0:
-					menu_cell_basic_draw(ctx, cell_layer, "Start", NULL, NULL);
+					format_time(timebuf, fartlek_get_total_time());
+					snprintf(titbuf, sizeof titbuf, "Start! (%s)", timebuf);
+					fartlek_tostring(subbuf, sizeof subbuf);
+					menu_cell_basic_draw(ctx, cell_layer, titbuf, subbuf, NULL);
 					break;
 				case 1:
 					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
