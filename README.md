@@ -9,8 +9,8 @@ Features
 ### Interval timer
 Configurable with extended rest
 
-### Fartlek
-Controlled
+### Ladder
+Descending
 
 ### Stretch timer
 With 8 stretch types
@@ -22,7 +22,7 @@ Planned
 History
 ----------------
 1.4 - UNRELEASED
-* Added controlled Fartlek
+* Added descending Ladder
 * Show total time in main menu
 
 1.3

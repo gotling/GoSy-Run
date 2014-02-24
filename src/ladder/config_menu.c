@@ -4,7 +4,7 @@
 #include "../common/tools.h"
 
 #define NUM_MENU_SECTIONS 1
-#define NUM_FIRST_MENU_ITEMS 4
+#define NUM_FIRST_MENU_ITEMS 5
 #define NUM_SECOND_MENU_ITEMS 1
 
 static Window *window;
@@ -68,6 +68,19 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 					snprintf(subbuf, 12, "%d", ladder_rounds);
 					menu_cell_basic_draw(ctx, cell_layer, "Repeat", subbuf, NULL);
 					break;
+				case 4:
+					switch (ladder_direction) {
+						case ASC:
+							strcpy(subbuf, "Ascending");
+							break;
+						case DESC:
+							strcpy(subbuf, "Descending");
+							break;
+						case ASC_DESC:
+							strcpy(subbuf, "Asc-Desc");
+							break;
+					}
+					menu_cell_basic_draw(ctx, cell_layer, "Direction", subbuf, NULL);
 			}
 			break;
 		case 1:
@@ -115,6 +128,9 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 					break;
 				case 3:
 					entry_init_number("Repeat", "%d times", 1, &ladder_rounds);
+					break;
+				case 4:
+					entry_init_number("Direction", "%d", 1, (int*)&ladder_direction);
 					break;
 			}
 			break;

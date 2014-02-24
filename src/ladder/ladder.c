@@ -39,9 +39,7 @@ static char buf[15];
 static void set_up() {
 	rounds = ladder_max_time / ladder_step_time;
 
-	for (int i = 0; i < rounds; ++i) {
-		round_time[i] = ladder_max_time - (i * ladder_step_time);
-	}
+	set_up_ladder(round_time);
 }
 
 static void update_time() {
