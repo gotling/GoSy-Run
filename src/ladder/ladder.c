@@ -37,10 +37,10 @@ static struct IntervalImages {
 static char buf[15];
 
 static void set_up() {
-	rounds = fartlek_max_time / fartlek_step_time;
+	rounds = ladder_max_time / ladder_step_time;
 
 	for (int i = 0; i < rounds; ++i) {
-		round_time[i] = fartlek_max_time - (i * fartlek_step_time);
+		round_time[i] = ladder_max_time - (i * ladder_step_time);
 	}
 }
 
@@ -65,7 +65,7 @@ static void update_time_ui() {
 static void update_ui() {
 	if (state.activity == FAST || state.activity == SLOW 
 		|| state.activity == EXTENDED_SLOW) {
-		snprintf(buf, sizeof buf, "Round %d:%d/%d:%d", state.round, (round_iterator + 1), fartlek_rounds, rounds);
+		snprintf(buf, sizeof buf, "Round %d:%d/%d:%d", (round_iterator + 1), state.round, rounds, ladder_rounds);
 		text_layer_set_text(ui.middle_text, buf);
 	}
 	
@@ -99,14 +99,14 @@ static void timer_callback(void *data) {
 
 	// Switch between states 
 	if (state.round_time == 0) {
-		if (state.round < fartlek_rounds || round_iterator < (rounds - 1)) {
+		if (state.round < ladder_rounds || round_iterator < (rounds - 1)) {
 			if (state.activity == FAST) {
 				/*if (interval_extended_slow && state.round % interval_extended_slow_rounds == 0) {
 					state.activity = EXTENDED_SLOW;
 					state.round_time = interval_extended_slow_time;
 				} else { */
 					state.activity = SLOW;
-					state.round_time = fartlek_slow_time;
+					state.round_time = ladder_slow_time;
 				//}
 				
 				vibes_long_pulse();
@@ -248,7 +248,7 @@ static void window_unload(Window *window) {
 	window_destroy(window);
 }
 
-void fartlek_init(void) {
+void ladder_init(void) {
 	ui.window = window_create();
 	window_set_click_config_provider(ui.window, click_config_provider);
 	window_set_window_handlers(ui.window, (WindowHandlers) {
@@ -262,6 +262,6 @@ void fartlek_init(void) {
 	window_stack_push(ui.window, animated);
 }
 
-void fartlek_deinit(void) {
+void ladder_deinit(void) {
 	window_destroy(ui.window);
 }

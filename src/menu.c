@@ -5,9 +5,9 @@
 #include "interval/interval.h"
 #include "interval/interval_config.h"
 #include "interval/interval_config_menu.h"
-#include "fartlek/fartlek.h"
-#include "fartlek/config.h"
-#include "fartlek/config_menu.h"
+#include "ladder/ladder.h"
+#include "ladder/config.h"
+#include "ladder/config_menu.h"
 #include "common/tools.h"
 
 #define NUM_MENU_SECTIONS 3
@@ -49,7 +49,7 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 			menu_cell_basic_header_draw(ctx, cell_layer, "Stretch Timer");
 			break;
 		case 2:
-			menu_cell_basic_header_draw(ctx, cell_layer, "Fartlek");
+			menu_cell_basic_header_draw(ctx, cell_layer, "Ladder");
 			break;
 	}
 }
@@ -108,7 +108,7 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 2:
 			switch (cell_index->row) {
 				case 0:
-					fartlek_tostring(subbuf, sizeof subbuf);
+					ladder_tostring(subbuf, sizeof subbuf);
 					menu_cell_basic_draw_multiline(ctx, cell_layer, "Start", subbuf, NULL);
 					break;
 				case 1:
@@ -146,10 +146,10 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 		case 2:
 			switch (cell_index->row) {
 				case 0:
-					fartlek_init();
+					ladder_init();
 					break;
 				case 1:
-					fartlek_config_menu_init();
+					ladder_config_menu_init();
 					break;
 			}
 			break;

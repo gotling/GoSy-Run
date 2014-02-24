@@ -21,7 +21,7 @@ static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t secti
 		case 0:
 			return NUM_FIRST_MENU_ITEMS;
 		case 1:
-			if (fartlek_extended_slow) {
+			if (ladder_extended_slow) {
 				return 3;
 			} else {
 				return 1;
@@ -53,19 +53,19 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					format_time_long(subbuf, fartlek_step_time);
+					format_time_long(subbuf, ladder_step_time);
 					menu_cell_basic_draw(ctx, cell_layer, "Shortest Fast", subbuf, NULL);
 					break;
 				case 1:
-					format_time_long(subbuf, fartlek_max_time);
+					format_time_long(subbuf, ladder_max_time);
 					menu_cell_basic_draw(ctx, cell_layer, "Longest Fast", subbuf, NULL);
 					break;
 				case 2:
-					format_time_long(subbuf, fartlek_slow_time);
+					format_time_long(subbuf, ladder_slow_time);
 					menu_cell_basic_draw(ctx, cell_layer, "Slow", subbuf, NULL);
 					break;
 				case 3:
-					snprintf(subbuf, 12, "%d", fartlek_rounds);
+					snprintf(subbuf, 12, "%d", ladder_rounds);
 					menu_cell_basic_draw(ctx, cell_layer, "Repeat", subbuf, NULL);
 					break;
 			}
@@ -73,18 +73,18 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 1:
 			switch (cell_index->row) {
 				case 0:
-					if (fartlek_extended_slow) {
+					if (ladder_extended_slow) {
 						menu_cell_basic_draw(ctx, cell_layer, "Enabled", NULL, NULL);
 					} else {
 						menu_cell_basic_draw(ctx, cell_layer, "Disabled", NULL, NULL);
 					}
 					break;
 				case 1:
-					format_time_long(subbuf, fartlek_extended_slow_time);
+					format_time_long(subbuf, ladder_extended_slow_time);
 					menu_cell_basic_draw(ctx, cell_layer, "Slow", subbuf, NULL);
 					break;
 				case 2:
-					snprintf(subbuf, 12, "%d repeats", fartlek_extended_slow_rounds);
+					snprintf(subbuf, 12, "%d repeats", ladder_extended_slow_rounds);
 					menu_cell_basic_draw(ctx, cell_layer, "Every", subbuf, NULL);
 					break;
 			}
@@ -93,10 +93,10 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 }
 
 static void step_updated(void) {
-	if (fartlek_max_time < fartlek_step_time) {
-		fartlek_max_time = fartlek_step_time;
+	if (ladder_max_time < ladder_step_time) {
+		ladder_max_time = ladder_step_time;
 	} else {
-		fartlek_max_time -= (fartlek_max_time % fartlek_step_time);	
+		ladder_max_time -= (ladder_max_time % ladder_step_time);	
 	}
 }
 
@@ -105,37 +105,37 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					entry_init_time_callback("Shortest Fast", &fartlek_step_time, &step_updated);
+					entry_init_time_callback("Shortest Fast", &ladder_step_time, &step_updated);
 					break;
 				case 1:
-					entry_init_time_step("Longest Fast", fartlek_step_time, &fartlek_max_time);
+					entry_init_time_step("Longest Fast", ladder_step_time, &ladder_max_time);
 					break;
 				case 2:
-					entry_init_time("Slow", &fartlek_slow_time);
+					entry_init_time("Slow", &ladder_slow_time);
 					break;
 				case 3:
-					entry_init_number("Repeat", "%d times", 1, &fartlek_rounds);
+					entry_init_number("Repeat", "%d times", 1, &ladder_rounds);
 					break;
 			}
 			break;
 		case 1:
 			switch (cell_index->row) {
 				case 0:
-					if (fartlek_extended_slow) {
-						fartlek_extended_slow = false;
+					if (ladder_extended_slow) {
+						ladder_extended_slow = false;
 						second_menu_items = 1;
 					} else {
-						fartlek_extended_slow = true;
+						ladder_extended_slow = true;
 						second_menu_items = 3;
 					}
 					menu_layer_reload_data(menu_layer);
 					menu_layer_set_selected_index(menu_layer, menu_layer_get_selected_index(menu_layer), MenuRowAlignCenter, true);
 					break;
 				case 1:
-					entry_init_time("Extended Slow", &fartlek_extended_slow_time);
+					entry_init_time("Extended Slow", &ladder_extended_slow_time);
 					break;
 				case 2:
-					entry_init_number("Extended Slow Every", "%d repeats", 1, &fartlek_extended_slow_rounds);
+					entry_init_number("Extended Slow Every", "%d repeats", 1, &ladder_extended_slow_rounds);
 					break;
 				default:
 					break;
@@ -150,7 +150,7 @@ static void window_load(Window *window) {
 	GRect bounds = layer_get_frame(window_layer);
 	
 	header = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, 32 } });
-	text_layer_set_text(header, "Fartlek Config");
+	text_layer_set_text(header, "Ladder Config");
 	text_layer_set_text_alignment(header, GTextAlignmentCenter);
 	text_layer_set_font(header, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
 	layer_add_child(window_layer, text_layer_get_layer(header));
@@ -169,7 +169,7 @@ static void window_load(Window *window) {
 }
 
 static void window_unload(Window *window) {
-	fartlek_write_persistent();
+	ladder_write_persistent();
 	
 	text_layer_destroy(header);
 	menu_layer_destroy(menu_layer);
@@ -177,7 +177,7 @@ static void window_unload(Window *window) {
 	window_destroy(window);
 }
 
-void fartlek_config_menu_init(void) {
+void ladder_config_menu_init(void) {
 	window = window_create();
 	window_set_window_handlers(window, (WindowHandlers) {
 		.load = window_load,
@@ -187,6 +187,6 @@ void fartlek_config_menu_init(void) {
 	window_stack_push(window, animated);
 }
 
-void fartlek_config_menu_deinit(void) {
+void ladder_config_menu_deinit(void) {
 	window_destroy(window);
 }
