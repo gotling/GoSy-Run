@@ -3,7 +3,7 @@
 #include "../common/entry.h"
 #include "../common/tools.h"
 
-#define NUM_MENU_SECTIONS 2
+#define NUM_MENU_SECTIONS 1
 #define NUM_FIRST_MENU_ITEMS 4
 #define NUM_SECOND_MENU_ITEMS 1
 
