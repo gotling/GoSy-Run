@@ -9,7 +9,7 @@ Features
 Configurable with extended rest
 
 ### Ladder timer
-Ascending, Ascending and Descending or Descending
+Ascending, Descending or Ascending and Descending
 
 ### Stretch timer
 With 8 stretch types
@@ -20,8 +20,8 @@ Planned
 
 History
 ----------------
-1.4 - UNRELEASED
-* Added Ladder
+1.4
+* Added Ladder timer
 * Show total time in main menu
 
 1.3
@@ -29,7 +29,7 @@ History
 * Stretch timer configurable
 
 1.2
-* Added Interval Timer
+* Added Interval timer
 
 1.1
 * Update to support FW RC1
