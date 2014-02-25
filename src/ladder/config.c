@@ -51,6 +51,31 @@ void ladder_write_persistent() {
 	persist_write_int(LADDER_DIRECTION_PKEY, ladder_direction);
 }
 
+char* lookup_direction(char *buf, int direction) {
+	switch(direction) {
+		case ASC:
+			strcpy(buf, "Ascending");
+			break;
+		case DESC:
+			strcpy(buf, "Descending");
+			break;
+		case ASC_DESC:
+			strcpy(buf, "Asc-Desc");
+			break;
+	}
+
+	return buf;
+}
+
+int ladder_get_step_count() {
+	switch (ladder_direction) {
+		case ASC_DESC:
+			return (ladder_max_time / ladder_step_time) * 2 - 1;
+		default:
+			return ladder_max_time / ladder_step_time;
+	}
+}
+
 int *set_up_ladder(int *round_time) {
 	int rounds = ladder_max_time / ladder_step_time;
 
@@ -60,17 +85,17 @@ int *set_up_ladder(int *round_time) {
 				round_time[i] =  ((i + 1) * ladder_step_time);
 			}
 			break;
-		case DESC:
-			for (int i = 0; i < rounds; ++i) {
-				round_time[i] = ladder_max_time - (i * ladder_step_time);
-			}
-			break;
 		case ASC_DESC:
 			for (int i = 0; i < rounds; ++i) {
 				round_time[i] =  ((i + 1) * ladder_step_time);
 			}
-			for (int i = rounds; i < (rounds + rounds); ++i) {
-				round_time[i] = ladder_max_time - ((i - rounds) * ladder_step_time);
+			for (int i = rounds; i < (rounds * 2) - 1; ++i) {
+				round_time[i] = ladder_max_time - ((i - (rounds - 1)) * ladder_step_time);
+			}
+			break;
+		case DESC:
+			for (int i = 0; i < rounds; ++i) {
+				round_time[i] = ladder_max_time - (i * ladder_step_time);
 			}
 			break;
 	}
@@ -86,8 +111,8 @@ char *ladder_tostring(char *output, int length) {
 	snprintf(output, length, "Total time: %s\n", total_time_text);
 
 	// Line 2
-	char fatlek_text[10];
-	int rounds = ladder_max_time / ladder_step_time;
+	char fatlek_text[20];
+	int rounds = ladder_get_step_count();
 	int round_time[rounds];
 	set_up_ladder(round_time);
 
@@ -108,11 +133,15 @@ char *ladder_tostring(char *output, int length) {
 
 int ladder_get_total_time() {
 	int total_time = 0;
-	int rounds = ladder_max_time / ladder_step_time;
+	int rounds = ladder_get_step_count();
+	int round_time[rounds];
+	set_up_ladder(round_time);
+
 	for (int i = 0; i < rounds; ++i) {
-		total_time += (ladder_max_time - (i * ladder_step_time));
+		total_time += round_time[i];
 		total_time += ladder_slow_time;
 	}
+
 	total_time *= ladder_rounds;
 	total_time -= ladder_slow_time;
 

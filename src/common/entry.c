@@ -23,6 +23,8 @@ static struct EntryState {
 	TimeType time_type;
 	bool callback;
 	void (*callback_function)(void);
+	char* (*lookup_function)(char *buf, int direction);
+	int choices_count;
 } state;
 
 static char buf[12];
@@ -30,6 +32,8 @@ static char buf[12];
 static void update_ui() {
 	if (state.entry_type == TIME) {
 		format_time_long(buf, *state.entry);
+	} else if (state.entry_type == ENUM) {
+		state.lookup_function(buf, *state.entry);
 	} else {
 		snprintf(buf, 12, state.format, *state.entry);
 	}
@@ -56,11 +60,16 @@ static int get_step(bool up) {
 	} else {
 		return state.step;
 	}
-
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void* context) {
-	*state.entry += get_step(true);
+	if (state.entry_type == ENUM) {
+		if (*state.entry < state.choices_count) {
+			*state.entry += 1;
+		}
+	} else {
+		*state.entry += get_step(true);
+	}
 	update_ui();
 }
 
@@ -177,6 +186,15 @@ void entry_init_time_step(char *title, int step, int *entry) {
 
 	state.time_type = TIME_STEP;
 	state.step = step;
+}
+
+void entry_init_enum(char *title, char* (*lookup_function)(char *buf, int direction), int choices_count, int *entry) {
+	state.entry_type = ENUM;
+	state.lookup_function = lookup_function;
+	state.choices_count = choices_count;
+	state.step = 1;
+
+	entry_init((char*) title, (int*) entry);
 }
 
 void entry_deinit(void) {

@@ -9,7 +9,7 @@ enum _activity { FAST, SLOW, EXTENDED_SLOW, FINISHED, PAUSED };
 static int rounds;
 static int round_iterator = 0;
 // TODO: Dynamic size
-static int round_time[10];
+static int *round_time;
 
 static struct IntervalUi {
 	Window *window;
@@ -37,8 +37,9 @@ static struct IntervalImages {
 static char buf[15];
 
 static void set_up() {
-	rounds = ladder_max_time / ladder_step_time;
+	rounds = ladder_get_step_count();
 
+	round_time = malloc(rounds * sizeof *round_time);
 	set_up_ladder(round_time);
 }
 
@@ -242,6 +243,10 @@ static void window_unload(Window *window) {
 	bitmap_layer_destroy(ui.image);
 	
 	gbitmap_destroy(image.checkmark);
+
+	if (round_time) {
+		free(round_time);
+	}
 
 	window_destroy(window);
 }

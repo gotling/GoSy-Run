@@ -69,17 +69,7 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 					menu_cell_basic_draw(ctx, cell_layer, "Repeat", subbuf, NULL);
 					break;
 				case 4:
-					switch (ladder_direction) {
-						case ASC:
-							strcpy(subbuf, "Ascending");
-							break;
-						case DESC:
-							strcpy(subbuf, "Descending");
-							break;
-						case ASC_DESC:
-							strcpy(subbuf, "Asc-Desc");
-							break;
-					}
+					lookup_direction(subbuf, ladder_direction);
 					menu_cell_basic_draw(ctx, cell_layer, "Direction", subbuf, NULL);
 			}
 			break;
@@ -130,7 +120,7 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 					entry_init_number("Repeat", "%d times", 1, &ladder_rounds);
 					break;
 				case 4:
-					entry_init_number("Direction", "%d", 1, (int*)&ladder_direction);
+					entry_init_enum("Direction", &lookup_direction, 3, (int*)&ladder_direction);
 					break;
 			}
 			break;

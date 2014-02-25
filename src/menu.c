@@ -195,6 +195,7 @@ void menu_init(void) {
 	
 	interval_read_persistent();
 	stretch_read_persistent();
+	ladder_read_persistent();
 	
 	const bool animated = true;
 	window_stack_push(window, animated);

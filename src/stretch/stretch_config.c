@@ -16,9 +16,11 @@ int stretch_prepare_time = PREPARE_TIME_DEFAULT;
 void stretch_read_persistent() {
 	stretch_stretch_time = persist_exists(STRETCH_TIME_PKEY) ? persist_read_int(STRETCH_TIME_PKEY) : STRETCH_TIME_DEFAULT;
 	stretch_prepare_time = persist_exists(PREPARE_TIME_PKEY) ? persist_read_int(PREPARE_TIME_PKEY) : PREPARE_TIME_DEFAULT;
+	APP_LOG(APP_LOG_LEVEL_DEBUG, "Stretch Read. Stretch %d, Prepare %d", stretch_stretch_time, stretch_prepare_time);
 }
 
 void stretch_write_persistent() {
+	APP_LOG(APP_LOG_LEVEL_DEBUG, "Stretch Write. Stretch %d, Prepare %d", stretch_stretch_time, stretch_prepare_time);
 	persist_write_int(STRETCH_TIME_PKEY, stretch_stretch_time);
 	persist_write_int(PREPARE_TIME_PKEY, stretch_prepare_time);
 }
