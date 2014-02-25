@@ -108,9 +108,10 @@ int *set_up_ladder(int *round_time) {
 
 char *ladder_tostring(char *output, int length) {
 	// Line 1
-	char total_time_text[7];
-	format_time(total_time_text, ladder_get_total_time());
-	snprintf(output, length, "Total time: %s\n", total_time_text);
+	// char total_time_text[7];
+	// format_time(total_time_text, ladder_get_total_time());
+	strcpy(output, "");
+	// snprintf(output, length, "Total time: %s\n", total_time_text);
 
 	// Line 2
 	char fatlek_text[20];

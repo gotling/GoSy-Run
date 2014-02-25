@@ -76,6 +76,7 @@ static int16_t menu_get_cell_height_callback(MenuLayer *menu_layer, MenuIndex *c
 	return 44;
 }
 
+static char timebuf[7];
 static char subbuf[40];
 
 static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
@@ -83,8 +84,10 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 0:
 			switch (cell_index->row) {
 				case 0:
+					format_time(timebuf, interval_get_total_time());
 					interval_tostring(subbuf, sizeof subbuf);
-					menu_cell_basic_draw_multiline(ctx, cell_layer, "Start", subbuf, NULL);
+					menu_cell_basic_draw_multiline_with_extra_title(ctx, cell_layer, "Start", timebuf, subbuf, NULL);
+					// menu_cell_basic_draw_multiline(ctx, cell_layer, "Start", subbuf, NULL);
 					break;
 				case 1:
 					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
@@ -97,8 +100,10 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 1:
 			switch (cell_index->row) {
 				case 0:
+					format_time(timebuf, ladder_get_total_time());
 					ladder_tostring(subbuf, sizeof subbuf);
-					menu_cell_basic_draw_multiline(ctx, cell_layer, "Start", subbuf, NULL);
+					menu_cell_basic_draw_multiline_with_extra_title(ctx, cell_layer, "Start", timebuf, subbuf, NULL);
+					// menu_cell_basic_draw_multiline(ctx, cell_layer, "Start", subbuf, NULL);
 					break;
 				case 1:
 					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
@@ -108,8 +113,10 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 2:
 			switch (cell_index->row) {
 				case 0:
+					format_time(timebuf, stretch_get_total_time());
 					stretch_tostring(subbuf, sizeof subbuf);
-					menu_cell_basic_draw_multiline(ctx, cell_layer, "Start", subbuf, NULL);
+					menu_cell_basic_draw_multiline_with_extra_title(ctx, cell_layer, "Start", timebuf, subbuf, NULL);
+					// menu_cell_basic_draw_multiline(ctx, cell_layer, "Start", subbuf, NULL);
 					break;
 				case 1:
 					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
