@@ -38,9 +38,11 @@ void ladder_read_persistent() {
 	ladder_extended_slow_time = persist_exists(EXTENDED_SLOW_TIME_PKEY) ? persist_read_int(EXTENDED_SLOW_TIME_PKEY) : EXTENDED_SLOW_TIME_DEFAULT;
 	ladder_extended_slow_rounds = persist_exists(EXTENDED_SLOW_ROUNDS_PKEY) ? persist_read_int(EXTENDED_SLOW_ROUNDS_PKEY) : EXTENDED_SLOW_ROUNDS_DEFAULT;
 	ladder_direction = persist_exists(LADDER_DIRECTION_PKEY) ? persist_read_int(LADDER_DIRECTION_PKEY) : LADDER_DIRECTION_DEFAULT;
+	APP_LOG(APP_LOG_LEVEL_DEBUG, "Ladder Read. Step %d, Max %d", ladder_step_time, ladder_max_time);
 }
 
 void ladder_write_persistent() {
+	APP_LOG(APP_LOG_LEVEL_DEBUG, "Ladder Write. Step %d, Max %d", ladder_step_time, ladder_max_time);
 	persist_write_int(STEP_TIME_PKEY, ladder_step_time);
 	persist_write_int(MAX_TIME_PKEY, ladder_max_time);
 	persist_write_int(SLOW_TIME_PKEY, ladder_slow_time);
@@ -116,18 +118,35 @@ char *ladder_tostring(char *output, int length) {
 	int round_time[rounds];
 	set_up_ladder(round_time);
 
-	for (int i = 0; i < rounds; ++i) {
-		if(i < (rounds - 1)) {
-			snprintf(fatlek_text, sizeof fatlek_text, "%d-", round_time[i]);
-		} else {
-			snprintf(fatlek_text, sizeof fatlek_text, "%d", round_time[i]);
+	if (rounds <= 5) {
+		for (int i = 0; i < rounds; ++i) {
+			if(i < (rounds - 1)) {
+				snprintf(fatlek_text, sizeof fatlek_text, "%d-", round_time[i]);
+			} else {
+				snprintf(fatlek_text, sizeof fatlek_text, "%d", round_time[i]);
+			}
+			strncat(output, fatlek_text, sizeof fatlek_text);
 		}
+	} else {
+		switch(ladder_direction) {
+			case ASC:
+			case DESC:
+				snprintf(fatlek_text, sizeof fatlek_text, "%d-%d..%d", round_time[0], round_time[1], round_time[rounds-1]);
+				break;
+			case ASC_DESC:
+				if (rounds % 2 == 0) {
+					snprintf(fatlek_text, sizeof fatlek_text, "%d..%d-%d..%d", round_time[0], round_time[rounds / 2 - 1], round_time[rounds / 2], round_time[rounds-1]);
+				} else {
+					snprintf(fatlek_text, sizeof fatlek_text, "%d-%d..%d..%d", round_time[0], round_time[1], round_time[rounds / 2], round_time[rounds-1]);
+				}
+				break;
+		}
+
 		strncat(output, fatlek_text, sizeof fatlek_text);
 	}
 
 	snprintf(fatlek_text, sizeof fatlek_text, " * %d", ladder_rounds);
 	strncat(output, fatlek_text, sizeof fatlek_text);
-		
 	return output;
 }
 
