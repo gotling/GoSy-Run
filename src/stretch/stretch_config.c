@@ -19,7 +19,6 @@ void stretch_read_persistent() {
 }
 
 void stretch_write_persistent() {
-	APP_LOG(APP_LOG_LEVEL_DEBUG, "Stretch Write. Stretch %d, Prepare %d", stretch_stretch_time, stretch_prepare_time);
 	persist_write_int(STRETCH_TIME_PKEY, stretch_stretch_time);
 	persist_write_int(PREPARE_TIME_PKEY, stretch_prepare_time);
 }

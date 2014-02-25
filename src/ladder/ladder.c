@@ -8,7 +8,6 @@ enum _activity { FAST, SLOW, EXTENDED_SLOW, FINISHED, PAUSED };
 
 static int rounds;
 static int round_iterator = 0;
-// TODO: Dynamic size
 static int *round_time;
 
 static struct IntervalUi {
@@ -73,10 +72,10 @@ static void update_ui() {
 			text_layer_set_text(ui.top_text, "Fast");
 			break;
 		case SLOW:
-			text_layer_set_text(ui.top_text, "Slow");
+			text_layer_set_text(ui.top_text, "Recover");
 			break;
 		case EXTENDED_SLOW:
-			text_layer_set_text(ui.top_text, "Extended Slow");
+			text_layer_set_text(ui.top_text, "Extended Recovery");
 			break;
 		case PAUSED:
 			text_layer_set_text(ui.top_text, "PAUSED");

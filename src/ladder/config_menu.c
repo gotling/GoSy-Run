@@ -41,7 +41,7 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 			menu_cell_basic_header_draw(ctx, cell_layer, "General");
 			break;
 		case 1:
-			menu_cell_basic_header_draw(ctx, cell_layer, "Extended Slow");
+			menu_cell_basic_header_draw(ctx, cell_layer, "Extended Recovery");
 			break;
 	}
 }
@@ -62,7 +62,7 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 					break;
 				case 2:
 					format_time_long(subbuf, ladder_slow_time);
-					menu_cell_basic_draw(ctx, cell_layer, "Slow", subbuf, NULL);
+					menu_cell_basic_draw(ctx, cell_layer, "Recover", subbuf, NULL);
 					break;
 				case 3:
 					snprintf(subbuf, 12, "%d", ladder_rounds);
@@ -84,7 +84,7 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 					break;
 				case 1:
 					format_time_long(subbuf, ladder_extended_slow_time);
-					menu_cell_basic_draw(ctx, cell_layer, "Slow", subbuf, NULL);
+					menu_cell_basic_draw(ctx, cell_layer, "Recover", subbuf, NULL);
 					break;
 				case 2:
 					snprintf(subbuf, 12, "%d repeats", ladder_extended_slow_rounds);
@@ -114,7 +114,7 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 					entry_init_time_step("Longest Fast", ladder_step_time, &ladder_max_time);
 					break;
 				case 2:
-					entry_init_time("Slow", &ladder_slow_time);
+					entry_init_time("Recover", &ladder_slow_time);
 					break;
 				case 3:
 					entry_init_number("Repeat", "%d times", 1, &ladder_rounds);
@@ -138,10 +138,10 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 					menu_layer_set_selected_index(menu_layer, menu_layer_get_selected_index(menu_layer), MenuRowAlignCenter, true);
 					break;
 				case 1:
-					entry_init_time("Extended Slow", &ladder_extended_slow_time);
+					entry_init_time("Extended Recover", &ladder_extended_slow_time);
 					break;
 				case 2:
-					entry_init_number("Extended Slow Every", "%d repeats", 1, &ladder_extended_slow_rounds);
+					entry_init_number("Extended Recovery Every", "%d repeats", 1, &ladder_extended_slow_rounds);
 					break;
 				default:
 					break;

@@ -59,10 +59,10 @@ static void update_ui() {
 			text_layer_set_text(ui.top_text, "Workout");
 			break;
 		case REST:
-			text_layer_set_text(ui.top_text, "Rest");
+			text_layer_set_text(ui.top_text, "Recover");
 			break;
 		case EXTENDE_REST:
-			text_layer_set_text(ui.top_text, "Extended Rest");
+			text_layer_set_text(ui.top_text, "Ext. Recovery");
 			break;
 		case PAUSED:
 			text_layer_set_text(ui.top_text, "PAUSED");
