@@ -19,14 +19,21 @@ static struct EntryState {
 	int *entry;
 	int step;
 	char *format;
-	bool time_entry;
+	EntryType entry_type;
+	TimeType time_type;
+	bool callback;
+	void (*callback_function)(void);
+	char* (*lookup_function)(char *buf, int direction);
+	int choices_count;
 } state;
 
 static char buf[12];
 
 static void update_ui() {
-	if (state.time_entry) {
+	if (state.entry_type == TIME) {
 		format_time_long(buf, *state.entry);
+	} else if (state.entry_type == ENUM) {
+		state.lookup_function(buf, *state.entry);
 	} else {
 		snprintf(buf, 12, state.format, *state.entry);
 	}
@@ -48,16 +55,21 @@ static int get_time_step(bool up) {
 }
 
 static int get_step(bool up) {
-	if (state.time_entry) {
+	if (state.entry_type == TIME && state.time_type != TIME_STEP) {
 		return get_time_step(up);
 	} else {
 		return state.step;
 	}
-
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void* context) {
-	*state.entry += get_step(true);
+	if (state.entry_type == ENUM) {
+		if (*state.entry < state.choices_count) {
+			*state.entry += 1;
+		}
+	} else {
+		*state.entry += get_step(true);
+	}
 	update_ui();
 }
 
@@ -121,10 +133,17 @@ static void window_unload(Window *window) {
 	
 	action_bar_layer_destroy(action_bar);
 	
+	if(state.callback) {
+		state.callback_function();
+	}
+
 	window_destroy(window);
 }
 
-static void entry_init(void) {
+static void entry_init(char *title, int *entry) {
+	ui.title = title;
+	state.entry = entry;
+
 	action_icon_plus = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_ACTION_ICON_PLUS);
 	action_icon_confirm = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_ACTION_ICON_CONFIRM);
 	action_icon_minus = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_ACTION_ICON_MINUS);
@@ -140,21 +159,42 @@ static void entry_init(void) {
 }
 
 void entry_init_number(char *title, char *format, int step, int *entry) {
-	ui.title = title;
-	state.entry = entry;
+	state.entry_type = NUMBER;
 	state.step = step;
 	state.format = format;
-	state.time_entry = false;
-	
-	entry_init();
+
+	entry_init((char*) title, (int*) entry);
 }
 
 void entry_init_time(char *title, int *entry) {
-	ui.title = title;
-	state.entry = entry;
-	state.time_entry = true;
-	
-	entry_init();
+	state.entry_type = TIME;
+	state.time_type = TIME_NORMAL;
+
+	entry_init((char*) title, (int*) entry);
+}
+
+void entry_init_time_callback(char *title, int *entry, void (*callback)(void)) {
+	entry_init_time((char*)title, (int*)entry);
+
+	state.time_type = TIME_NORMAL;
+	state.callback = true;
+	state.callback_function = callback;
+}
+
+void entry_init_time_step(char *title, int step, int *entry) {
+	entry_init_time((char*)title, (int*)entry);
+
+	state.time_type = TIME_STEP;
+	state.step = step;
+}
+
+void entry_init_enum(char *title, char* (*lookup_function)(char *buf, int direction), int choices_count, int *entry) {
+	state.entry_type = ENUM;
+	state.lookup_function = lookup_function;
+	state.choices_count = choices_count;
+	state.step = 1;
+
+	entry_init((char*) title, (int*) entry);
 }
 
 void entry_deinit(void) {

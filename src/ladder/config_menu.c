@@ -1,10 +1,10 @@
 #include <pebble.h>
-#include "interval_config.h"
+#include "config.h"
 #include "../common/entry.h"
 #include "../common/tools.h"
 
-#define NUM_MENU_SECTIONS 2
-#define NUM_FIRST_MENU_ITEMS 3
+#define NUM_MENU_SECTIONS 1
+#define NUM_FIRST_MENU_ITEMS 5
 #define NUM_SECOND_MENU_ITEMS 1
 
 static Window *window;
@@ -21,7 +21,7 @@ static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t secti
 		case 0:
 			return NUM_FIRST_MENU_ITEMS;
 		case 1:
-			if (interval_extended_rest) {
+			if (ladder_extended_slow) {
 				return 3;
 			} else {
 				return 1;
@@ -53,16 +53,23 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					format_time_long(subbuf, interval_workout_time);
-					menu_cell_basic_draw(ctx, cell_layer, "Workout", subbuf, NULL);
+					ladder_direction_to_string(subbuf, ladder_direction);
+					menu_cell_basic_draw(ctx, cell_layer, "Direction", subbuf, NULL);
 					break;
 				case 1:
-					
-					format_time_long(subbuf, interval_rest_time);
-					menu_cell_basic_draw(ctx, cell_layer, "Recover", subbuf, NULL);
+					format_time_long(subbuf, ladder_step_time);
+					menu_cell_basic_draw(ctx, cell_layer, "Shortest", subbuf, NULL);
 					break;
 				case 2:
-					snprintf(subbuf, 12, "%d", interval_rounds);
+					format_time_long(subbuf, ladder_max_time);
+					menu_cell_basic_draw(ctx, cell_layer, "Longest", subbuf, NULL);
+					break;
+				case 3:
+					format_time_long(subbuf, ladder_slow_time);
+					menu_cell_basic_draw(ctx, cell_layer, "Recover", subbuf, NULL);
+					break;
+				case 4:
+					snprintf(subbuf, 12, "%d", ladder_rounds);
 					menu_cell_basic_draw(ctx, cell_layer, "Repeat", subbuf, NULL);
 					break;
 			}
@@ -70,18 +77,18 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 1:
 			switch (cell_index->row) {
 				case 0:
-					if (interval_extended_rest) {
+					if (ladder_extended_slow) {
 						menu_cell_basic_draw(ctx, cell_layer, "Enabled", NULL, NULL);
 					} else {
 						menu_cell_basic_draw(ctx, cell_layer, "Disabled", NULL, NULL);
 					}
 					break;
 				case 1:
-					format_time_long(subbuf, interval_extended_rest_time);
-					menu_cell_basic_draw(ctx, cell_layer, "Time", subbuf, NULL);
+					format_time_long(subbuf, ladder_extended_slow_time);
+					menu_cell_basic_draw(ctx, cell_layer, "Recover", subbuf, NULL);
 					break;
 				case 2:
-					snprintf(subbuf, 12, "%d rounds", interval_extended_rest_rounds);
+					snprintf(subbuf, 12, "%d repeats", ladder_extended_slow_rounds);
 					menu_cell_basic_draw(ctx, cell_layer, "Every", subbuf, NULL);
 					break;
 			}
@@ -89,40 +96,53 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 	}
 }
 
+static void step_updated(void) {
+	if (ladder_max_time < ladder_step_time) {
+		ladder_max_time = ladder_step_time;
+	} else {
+		ladder_max_time -= (ladder_max_time % ladder_step_time);	
+	}
+}
 
 static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
 	switch (cell_index->section) {
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					entry_init_time("Workout", &interval_workout_time);
+					entry_init_enum("Direction", &ladder_direction_to_string, 3, (int*)&ladder_direction);
 					break;
 				case 1:
-					entry_init_time("Recover", &interval_rest_time);
+					entry_init_time_callback("Shortest", &ladder_step_time, &step_updated);
 					break;
 				case 2:
-					entry_init_number("Rounds", "%d rounds", 1, &interval_rounds);
+					entry_init_time_step("Longest", ladder_step_time, &ladder_max_time);
+					break;
+				case 3:
+					entry_init_time("Recover", &ladder_slow_time);
+					break;
+				case 4:
+					entry_init_number("Repeat", "%d times", 1, &ladder_rounds);
 					break;
 			}
 			break;
 		case 1:
 			switch (cell_index->row) {
 				case 0:
-					if (interval_extended_rest) {
-						interval_extended_rest = false;
+					if (ladder_extended_slow) {
+						ladder_extended_slow = false;
 						second_menu_items = 1;
 					} else {
-						interval_extended_rest = true;
+						ladder_extended_slow = true;
 						second_menu_items = 3;
 					}
 					menu_layer_reload_data(menu_layer);
 					menu_layer_set_selected_index(menu_layer, menu_layer_get_selected_index(menu_layer), MenuRowAlignCenter, true);
 					break;
 				case 1:
-					entry_init_time("Extended Recovery", &interval_extended_rest_time);
+					entry_init_time("Extended Recover", &ladder_extended_slow_time);
 					break;
 				case 2:
-					entry_init_number("Extended Every", "%d rounds", 1, &interval_extended_rest_rounds);
+					entry_init_number("Extended Every", "%d repeats", 1, &ladder_extended_slow_rounds);
 					break;
 				default:
 					break;
@@ -137,7 +157,7 @@ static void window_load(Window *window) {
 	GRect bounds = layer_get_frame(window_layer);
 	
 	header = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, 32 } });
-	text_layer_set_text(header, "Interval Config");
+	text_layer_set_text(header, "Ladder Config");
 	text_layer_set_text_alignment(header, GTextAlignmentCenter);
 	text_layer_set_font(header, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
 	layer_add_child(window_layer, text_layer_get_layer(header));
@@ -156,7 +176,7 @@ static void window_load(Window *window) {
 }
 
 static void window_unload(Window *window) {
-	interval_write_persistent();
+	ladder_write_persistent();
 	
 	text_layer_destroy(header);
 	menu_layer_destroy(menu_layer);
@@ -164,7 +184,7 @@ static void window_unload(Window *window) {
 	window_destroy(window);
 }
 
-void interval_config_menu_init(void) {
+void ladder_config_menu_init(void) {
 	window = window_create();
 	window_set_window_handlers(window, (WindowHandlers) {
 		.load = window_load,
@@ -174,6 +194,6 @@ void interval_config_menu_init(void) {
 	window_stack_push(window, animated);
 }
 
-void interval_config_menu_deinit(void) {
+void ladder_config_menu_deinit(void) {
 	window_destroy(window);
 }

@@ -1,8 +1,14 @@
 #include <pebble.h>
-#include "interval_config.h"
+#include "config.h"
 #include "../common/tools.h"
 
-enum _activity { WORKOUT, REST, EXTENDE_REST, FINISHED, PAUSED };
+// REPEAT, SET
+
+enum _activity { FAST, SLOW, EXTENDED_SLOW, FINISHED, PAUSED };
+
+static int rounds;
+static int round_iterator = 0;
+static int *round_time;
 
 static struct IntervalUi {
 	Window *window;
@@ -27,7 +33,14 @@ static struct IntervalImages {
 	GBitmap *checkmark;
 } image;
 
-static char buf[12];
+static char buf[15];
+
+static void set_up() {
+	rounds = ladder_get_step_count();
+
+	round_time = malloc(rounds * sizeof *round_time);
+	ladder_set_up(round_time);
+}
 
 static void update_time() {
 	state.round_time--;
@@ -46,23 +59,23 @@ static void update_time_ui() {
 	text_layer_set_text(ui.total_time_text, timebuf2);
 }
 
-// When changing from workout to rest or vise verse
+// When changing from FAST to SLOW or vise verse
 static void update_ui() {
-	if (state.activity == WORKOUT || state.activity == REST 
-		|| state.activity == EXTENDE_REST) {
-		snprintf(buf, 12, "Round %d/%d", state.round, interval_rounds);
+	if (state.activity == FAST || state.activity == SLOW 
+		|| state.activity == EXTENDED_SLOW) {
+		snprintf(buf, sizeof buf, "Round %d:%d/%d:%d", (round_iterator + 1), state.round, rounds, ladder_rounds);
 		text_layer_set_text(ui.middle_text, buf);
 	}
 	
 	switch (state.activity) {
-		case WORKOUT:
-			text_layer_set_text(ui.top_text, "Workout");
+		case FAST:
+			text_layer_set_text(ui.top_text, "Fast");
 			break;
-		case REST:
+		case SLOW:
 			text_layer_set_text(ui.top_text, "Recover");
 			break;
-		case EXTENDE_REST:
-			text_layer_set_text(ui.top_text, "Ext. Recovery");
+		case EXTENDED_SLOW:
+			text_layer_set_text(ui.top_text, "Extended Recovery");
 			break;
 		case PAUSED:
 			text_layer_set_text(ui.top_text, "PAUSED");
@@ -84,21 +97,29 @@ static void timer_callback(void *data) {
 
 	// Switch between states 
 	if (state.round_time == 0) {
-		if (state.round < interval_rounds) {
-			if (state.activity == WORKOUT) {
-				if (interval_extended_rest && state.round % interval_extended_rest_rounds == 0) {
-					state.activity = EXTENDE_REST;
-					state.round_time = interval_extended_rest_time;
-				} else {
-					state.activity = REST;
-					state.round_time = interval_rest_time;
-				}
+		if (state.round < ladder_rounds || round_iterator < (rounds - 1)) {
+			if (state.activity == FAST) {
+				/*if (interval_extended_slow && state.round % interval_extended_slow_rounds == 0) {
+					state.activity = EXTENDED_SLOW;
+					state.round_time = interval_extended_slow_time;
+				} else { */
+					state.activity = SLOW;
+					state.round_time = ladder_slow_time;
+				//}
 				
 				vibes_long_pulse();
 			} else {
-				state.activity = WORKOUT;
-				state.round++;
-				state.round_time = interval_workout_time;      
+				state.activity = FAST;
+				
+				round_iterator++;
+				
+				if (round_iterator == rounds) {
+					round_iterator = 0;
+					state.round++;
+				}
+				
+				state.round_time = round_time[round_iterator];
+
 				vibes_long_pulse();
 			}
 		} else {
@@ -153,11 +174,12 @@ static void reset() {
 		state.timer = NULL;
 	}
 	
-	state.activity = WORKOUT;
+	state.activity = FAST;
 	state.active = false;
 	state.round = 1;
-	state.round_time = interval_workout_time;
+	state.round_time = round_time[0];
 	state.total_time = 0;
+	round_iterator = 0;
 	
 	update_ui();
 }
@@ -220,21 +242,28 @@ static void window_unload(Window *window) {
 	bitmap_layer_destroy(ui.image);
 	
 	gbitmap_destroy(image.checkmark);
-	
+
+	if (round_time) {
+		free(round_time);
+	}
+
 	window_destroy(window);
 }
 
-void interval_init(void) {
+void ladder_init(void) {
 	ui.window = window_create();
 	window_set_click_config_provider(ui.window, click_config_provider);
 	window_set_window_handlers(ui.window, (WindowHandlers) {
 		.load = window_load,
 		.unload = window_unload,
 	});
+
+	set_up();
+
 	const bool animated = true;
 	window_stack_push(ui.window, animated);
 }
 
-void interval_deinit(void) {
+void ladder_deinit(void) {
 	window_destroy(ui.window);
 }

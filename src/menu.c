@@ -5,11 +5,15 @@
 #include "interval/interval.h"
 #include "interval/interval_config.h"
 #include "interval/interval_config_menu.h"
+#include "ladder/ladder.h"
+#include "ladder/config.h"
+#include "ladder/config_menu.h"
 #include "common/tools.h"
 
-#define NUM_MENU_SECTIONS 2
+#define NUM_MENU_SECTIONS 3
 #define NUM_FIRST_MENU_ITEMS 2
 #define NUM_SECOND_MENU_ITEMS 2
+#define NUM_THIRD_MENU_ITEMS 2
 
 static Window *window;
 static TextLayer *header;
@@ -25,6 +29,8 @@ static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t secti
 			return NUM_FIRST_MENU_ITEMS;
 		case 1:
 			return NUM_SECOND_MENU_ITEMS;
+		case 2:
+			return NUM_THIRD_MENU_ITEMS;
 		default:
 			return 0;
 	}
@@ -40,53 +46,47 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 			menu_cell_basic_header_draw(ctx, cell_layer, "Interval Timer");
 			break;
 		case 1:
+			menu_cell_basic_header_draw(ctx, cell_layer, "Ladder Timer");
+			break;
+		case 2:
 			menu_cell_basic_header_draw(ctx, cell_layer, "Stretch Timer");
 			break;
 	}
 }
 
-static char subbuf[25];
+static int16_t menu_get_cell_height_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *callback_context) {
+	// switch (cell_index->section) {
+	// 	case 0:
+	// 		switch (cell_index->row) {
+	// 			case 0:
+	// 				return MENU_CELL_BASIC_MULTILINE_HEIGHT;
+	// 		}
+	// 	case 1:
+	// 		switch (cell_index->row) {
+	// 			case 0:
+	// 				return MENU_CELL_BASIC_MULTILINE_HEIGHT;
+	// 		}
+	// 	case 2:
+	// 		switch (cell_index->row) {
+	// 			case 0:
+	// 				return MENU_CELL_BASIC_MULTILINE_HEIGHT;
+	// 		}
+	// }
 
-static char *interval_subtitle(char *subtitle) {
-	char workout_time_text[7];
-	format_time(workout_time_text, interval_workout_time);
-	
-	char rest_time_text[7];
-	format_time(rest_time_text, interval_rest_time);
-	
-	snprintf(subbuf, sizeof subbuf, "%s+%s * %d", workout_time_text, rest_time_text, interval_rounds);
-	
-	if (interval_extended_rest) {
-		char extended_rest_time_text[7];
-		format_time(extended_rest_time_text, interval_extended_rest_time);
-		
-		char erbuf[10];
-		snprintf(erbuf, sizeof erbuf, " +%s/%d", extended_rest_time_text, interval_extended_rest_rounds);
-		strncat(subbuf, erbuf, sizeof erbuf);
-	}
-	
-	return subtitle;
+	return 44;
 }
 
-static char *stretch_subtitle(char *subtitle) {
-	char stretch_time_text[7];
-	format_time(stretch_time_text, stretch_stretch_time);
-	
-	char prepare_time_text[7];
-	format_time(prepare_time_text, stretch_prepare_time);
-	
-	snprintf(subbuf, sizeof subbuf, "%s+%s", stretch_time_text, prepare_time_text);
-	
-	return subtitle;
-}
+static char timebuf[7];
+static char subbuf[40];
 
 static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
 	switch (cell_index->section) {
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					interval_subtitle(subbuf);
-					menu_cell_basic_draw(ctx, cell_layer, "Start", subbuf, NULL);
+					format_time(timebuf, interval_get_total_time());
+					interval_tostring(subbuf, sizeof subbuf);
+					menu_cell_basic_draw_multiline_with_extra_title(ctx, cell_layer, "Start", timebuf, subbuf, NULL);
 					break;
 				case 1:
 					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
@@ -99,8 +99,21 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 1:
 			switch (cell_index->row) {
 				case 0:
-					stretch_subtitle(subbuf);
-					menu_cell_basic_draw(ctx, cell_layer, "Start", subbuf, NULL);
+					format_time(timebuf, ladder_get_total_time());
+					ladder_tostring(subbuf, sizeof subbuf);
+					menu_cell_basic_draw_multiline_with_extra_title(ctx, cell_layer, "Start", timebuf, subbuf, NULL);
+					break;
+				case 1:
+					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
+					break;
+			}
+			break;
+		case 2:
+			switch (cell_index->row) {
+				case 0:
+					format_time(timebuf, stretch_get_total_time());
+					stretch_tostring(subbuf, sizeof subbuf);
+					menu_cell_basic_draw_multiline_with_extra_title(ctx, cell_layer, "Start", timebuf, subbuf, NULL);
 					break;
 				case 1:
 					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
@@ -124,6 +137,16 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 			}
 			break;
 		case 1:
+			switch (cell_index->row) {
+				case 0:
+					ladder_init();
+					break;
+				case 1:
+					ladder_config_menu_init();
+					break;
+			}
+			break;
+		case 2:
 			switch (cell_index->row) {
 				case 0:
 					stretch_init();
@@ -151,6 +174,7 @@ static void window_load(Window *window) {
 		.get_num_sections = menu_get_num_sections_callback,
 		.get_num_rows = menu_get_num_rows_callback,
 		.get_header_height = menu_get_header_height_callback,
+		.get_cell_height = menu_get_cell_height_callback,
 		.draw_header = menu_draw_header_callback,
 		.draw_row = menu_draw_row_callback,
 		.select_click = menu_select_callback,
@@ -173,6 +197,7 @@ void menu_init(void) {
 	});
 	
 	interval_read_persistent();
+	ladder_read_persistent();
 	stretch_read_persistent();
 	
 	const bool animated = true;
