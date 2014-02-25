@@ -53,24 +53,25 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					format_time_long(subbuf, ladder_step_time);
-					menu_cell_basic_draw(ctx, cell_layer, "Shortest Fast", subbuf, NULL);
+					ladder_direction_to_string(subbuf, ladder_direction);
+					menu_cell_basic_draw(ctx, cell_layer, "Direction", subbuf, NULL);
 					break;
 				case 1:
-					format_time_long(subbuf, ladder_max_time);
-					menu_cell_basic_draw(ctx, cell_layer, "Longest Fast", subbuf, NULL);
+					format_time_long(subbuf, ladder_step_time);
+					menu_cell_basic_draw(ctx, cell_layer, "Shortest", subbuf, NULL);
 					break;
 				case 2:
+					format_time_long(subbuf, ladder_max_time);
+					menu_cell_basic_draw(ctx, cell_layer, "Longest", subbuf, NULL);
+					break;
+				case 3:
 					format_time_long(subbuf, ladder_slow_time);
 					menu_cell_basic_draw(ctx, cell_layer, "Recover", subbuf, NULL);
 					break;
-				case 3:
+				case 4:
 					snprintf(subbuf, 12, "%d", ladder_rounds);
 					menu_cell_basic_draw(ctx, cell_layer, "Repeat", subbuf, NULL);
 					break;
-				case 4:
-					lookup_direction(subbuf, ladder_direction);
-					menu_cell_basic_draw(ctx, cell_layer, "Direction", subbuf, NULL);
 			}
 			break;
 		case 1:
@@ -108,19 +109,19 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					entry_init_time_callback("Shortest Fast", &ladder_step_time, &step_updated);
+					entry_init_enum("Direction", &ladder_direction_to_string, 3, (int*)&ladder_direction);
 					break;
 				case 1:
-					entry_init_time_step("Longest Fast", ladder_step_time, &ladder_max_time);
+					entry_init_time_callback("Shortest", &ladder_step_time, &step_updated);
 					break;
 				case 2:
-					entry_init_time("Recover", &ladder_slow_time);
+					entry_init_time_step("Longest", ladder_step_time, &ladder_max_time);
 					break;
 				case 3:
-					entry_init_number("Repeat", "%d times", 1, &ladder_rounds);
+					entry_init_time("Recover", &ladder_slow_time);
 					break;
 				case 4:
-					entry_init_enum("Direction", &lookup_direction, 3, (int*)&ladder_direction);
+					entry_init_number("Repeat", "%d times", 1, &ladder_rounds);
 					break;
 			}
 			break;
@@ -141,7 +142,7 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 					entry_init_time("Extended Recover", &ladder_extended_slow_time);
 					break;
 				case 2:
-					entry_init_number("Extended Recovery Every", "%d repeats", 1, &ladder_extended_slow_rounds);
+					entry_init_number("Extended Every", "%d repeats", 1, &ladder_extended_slow_rounds);
 					break;
 				default:
 					break;

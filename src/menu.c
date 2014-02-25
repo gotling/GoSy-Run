@@ -46,7 +46,7 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 			menu_cell_basic_header_draw(ctx, cell_layer, "Interval Timer");
 			break;
 		case 1:
-			menu_cell_basic_header_draw(ctx, cell_layer, "Ladder");
+			menu_cell_basic_header_draw(ctx, cell_layer, "Ladder Timer");
 			break;
 		case 2:
 			menu_cell_basic_header_draw(ctx, cell_layer, "Stretch Timer");
@@ -87,7 +87,6 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 					format_time(timebuf, interval_get_total_time());
 					interval_tostring(subbuf, sizeof subbuf);
 					menu_cell_basic_draw_multiline_with_extra_title(ctx, cell_layer, "Start", timebuf, subbuf, NULL);
-					// menu_cell_basic_draw_multiline(ctx, cell_layer, "Start", subbuf, NULL);
 					break;
 				case 1:
 					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
@@ -103,7 +102,6 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 					format_time(timebuf, ladder_get_total_time());
 					ladder_tostring(subbuf, sizeof subbuf);
 					menu_cell_basic_draw_multiline_with_extra_title(ctx, cell_layer, "Start", timebuf, subbuf, NULL);
-					// menu_cell_basic_draw_multiline(ctx, cell_layer, "Start", subbuf, NULL);
 					break;
 				case 1:
 					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
@@ -116,7 +114,6 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 					format_time(timebuf, stretch_get_total_time());
 					stretch_tostring(subbuf, sizeof subbuf);
 					menu_cell_basic_draw_multiline_with_extra_title(ctx, cell_layer, "Start", timebuf, subbuf, NULL);
-					// menu_cell_basic_draw_multiline(ctx, cell_layer, "Start", subbuf, NULL);
 					break;
 				case 1:
 					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);

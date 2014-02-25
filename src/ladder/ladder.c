@@ -39,7 +39,7 @@ static void set_up() {
 	rounds = ladder_get_step_count();
 
 	round_time = malloc(rounds * sizeof *round_time);
-	set_up_ladder(round_time);
+	ladder_set_up(round_time);
 }
 
 static void update_time() {

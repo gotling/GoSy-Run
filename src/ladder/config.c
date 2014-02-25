@@ -53,7 +53,7 @@ void ladder_write_persistent() {
 	persist_write_int(LADDER_DIRECTION_PKEY, ladder_direction);
 }
 
-char* lookup_direction(char *buf, int direction) {
+char* ladder_direction_to_string(char *buf, int direction) {
 	switch(direction) {
 		case ASC:
 			strcpy(buf, "Ascending");
@@ -78,7 +78,7 @@ int ladder_get_step_count() {
 	}
 }
 
-int *set_up_ladder(int *round_time) {
+int *ladder_set_up(int *round_time) {
 	int rounds = ladder_max_time / ladder_step_time;
 
 	switch (ladder_direction) {
@@ -107,17 +107,12 @@ int *set_up_ladder(int *round_time) {
 
 
 char *ladder_tostring(char *output, int length) {
-	// Line 1
-	// char total_time_text[7];
-	// format_time(total_time_text, ladder_get_total_time());
 	strcpy(output, "");
-	// snprintf(output, length, "Total time: %s\n", total_time_text);
 
-	// Line 2
 	char fatlek_text[20];
 	int rounds = ladder_get_step_count();
 	int round_time[rounds];
-	set_up_ladder(round_time);
+	ladder_set_up(round_time);
 
 	if (rounds <= 5) {
 		for (int i = 0; i < rounds; ++i) {
@@ -148,6 +143,7 @@ char *ladder_tostring(char *output, int length) {
 
 	snprintf(fatlek_text, sizeof fatlek_text, " * %d", ladder_rounds);
 	strncat(output, fatlek_text, sizeof fatlek_text);
+	
 	return output;
 }
 
@@ -155,7 +151,7 @@ int ladder_get_total_time() {
 	int total_time = 0;
 	int rounds = ladder_get_step_count();
 	int round_time[rounds];
-	set_up_ladder(round_time);
+	ladder_set_up(round_time);
 
 	for (int i = 0; i < rounds; ++i) {
 		total_time += round_time[i];

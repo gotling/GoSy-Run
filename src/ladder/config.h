@@ -19,7 +19,7 @@ void ladder_read_persistent();
 void ladder_write_persistent();
 
 int ladder_get_step_count();
-int *set_up_ladder(int *round_time);
+int *ladder_set_up(int *round_time);
 char *ladder_tostring(char *output, int length);
-char* lookup_direction(char *buf, int direction);
+char* ladder_direction_to_string(char *buf, int direction);
 int ladder_get_total_time();

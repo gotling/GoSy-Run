@@ -1,7 +1,6 @@
 GoSy Run
 ================
-
-Helps you while you exercise running.
+Helps you exercise running.
 
 Features
 ----------------
@@ -9,8 +8,8 @@ Features
 ### Interval timer
 Configurable with extended rest
 
-### Ladder
-Descending
+### Ladder timer
+Ascending, Ascending and Descending or Descending
 
 ### Stretch timer
 With 8 stretch types
@@ -22,7 +21,7 @@ Planned
 History
 ----------------
 1.4 - UNRELEASED
-* Added descending Ladder
+* Added Ladder
 * Show total time in main menu
 
 1.3
