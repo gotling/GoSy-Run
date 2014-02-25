@@ -46,10 +46,10 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 			menu_cell_basic_header_draw(ctx, cell_layer, "Interval Timer");
 			break;
 		case 1:
-			menu_cell_basic_header_draw(ctx, cell_layer, "Stretch Timer");
+			menu_cell_basic_header_draw(ctx, cell_layer, "Ladder");
 			break;
 		case 2:
-			menu_cell_basic_header_draw(ctx, cell_layer, "Ladder");
+			menu_cell_basic_header_draw(ctx, cell_layer, "Stretch Timer");
 			break;
 	}
 }
@@ -97,7 +97,7 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 1:
 			switch (cell_index->row) {
 				case 0:
-					stretch_tostring(subbuf, sizeof subbuf);
+					ladder_tostring(subbuf, sizeof subbuf);
 					menu_cell_basic_draw_multiline(ctx, cell_layer, "Start", subbuf, NULL);
 					break;
 				case 1:
@@ -108,7 +108,7 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 2:
 			switch (cell_index->row) {
 				case 0:
-					ladder_tostring(subbuf, sizeof subbuf);
+					stretch_tostring(subbuf, sizeof subbuf);
 					menu_cell_basic_draw_multiline(ctx, cell_layer, "Start", subbuf, NULL);
 					break;
 				case 1:
@@ -116,7 +116,6 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 					break;
 			}
 			break;
-			
 	}
 }
 
@@ -136,20 +135,20 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 		case 1:
 			switch (cell_index->row) {
 				case 0:
-					stretch_init();
+					ladder_init();
 					break;
 				case 1:
-					stretch_config_menu_init();
+					ladder_config_menu_init();
 					break;
 			}
 			break;
 		case 2:
 			switch (cell_index->row) {
 				case 0:
-					ladder_init();
+					stretch_init();
 					break;
 				case 1:
-					ladder_config_menu_init();
+					stretch_config_menu_init();
 					break;
 			}
 			break;
@@ -194,8 +193,8 @@ void menu_init(void) {
 	});
 	
 	interval_read_persistent();
-	stretch_read_persistent();
 	ladder_read_persistent();
+	stretch_read_persistent();
 	
 	const bool animated = true;
 	window_stack_push(window, animated);
