@@ -6,6 +6,8 @@ extern int interval_rounds;
 extern bool interval_extended_rest;
 extern int interval_extended_rest_time;
 extern int interval_extended_rest_rounds;
+extern int interval_warm_up;
+extern int interval_cool_down;
 
 void interval_read_persistent();
 void interval_write_persistent();

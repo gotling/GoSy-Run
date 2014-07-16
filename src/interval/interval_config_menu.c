@@ -3,9 +3,10 @@
 #include "../common/entry.h"
 #include "../common/tools.h"
 
-#define NUM_MENU_SECTIONS 2
+#define NUM_MENU_SECTIONS 3
 #define NUM_FIRST_MENU_ITEMS 3
 #define NUM_SECOND_MENU_ITEMS 1
+#define NUM_THIRD_MENU_ITEMS 2
 
 static Window *window;
 static TextLayer *header;
@@ -26,6 +27,8 @@ static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t secti
 			} else {
 				return 1;
 			}
+		case 2:
+			return NUM_THIRD_MENU_ITEMS;
 		default:
 			return 0;
 	}
@@ -43,6 +46,9 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 		case 1:
 			menu_cell_basic_header_draw(ctx, cell_layer, "Extended Recovery");
 			break;
+		case 2:
+			menu_cell_basic_header_draw(ctx, cell_layer, "Warm up & Cool down");
+			break;
 	}
 }
 
@@ -57,7 +63,6 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 					menu_cell_basic_draw(ctx, cell_layer, "Workout", subbuf, NULL);
 					break;
 				case 1:
-					
 					format_time_long(subbuf, interval_rest_time);
 					menu_cell_basic_draw(ctx, cell_layer, "Recover", subbuf, NULL);
 					break;
@@ -86,6 +91,17 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 					break;
 			}
 			break;
+		case 2:
+			switch (cell_index->row) {
+				case 0:
+					format_time_long(subbuf, interval_warm_up);
+					menu_cell_basic_draw(ctx, cell_layer, "Warm up", subbuf, NULL);
+					break;
+				case 1:
+					format_time_long(subbuf, interval_cool_down);
+					menu_cell_basic_draw(ctx, cell_layer, "Cool down", subbuf, NULL);
+					break;
+			}
 	}
 }
 
@@ -128,7 +144,16 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 					break;
 			}
 			break;
-
+		case 2:
+			switch (cell_index->row) {
+				case 0:
+					entry_init_time_zero_allowed("Warm up", &interval_warm_up);
+					break;
+				case 1:
+					entry_init_time_zero_allowed("Cool down", &interval_cool_down);
+					break;
+			}
+			break;
 	}
 }
 

@@ -25,6 +25,7 @@ static struct EntryState {
 	void (*callback_function)(void);
 	char* (*lookup_function)(char *buf, int direction);
 	int choices_count;
+	bool zero_allowed;
 } state;
 
 static char buf[12];
@@ -74,7 +75,7 @@ static void up_click_handler(ClickRecognizerRef recognizer, void* context) {
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void* context) {
-	if (*state.entry - get_step(false) > 0) {
+	if ((*state.entry - get_step(false) > 0) || (state.zero_allowed && (*state.entry - get_step(false) >= 0))) {
 		*state.entry -= get_step(false);
 		update_ui();
 	}
@@ -162,6 +163,7 @@ void entry_init_number(char *title, char *format, int step, int *entry) {
 	state.entry_type = NUMBER;
 	state.step = step;
 	state.format = format;
+	state.zero_allowed = false;
 
 	entry_init((char*) title, (int*) entry);
 }
@@ -169,6 +171,15 @@ void entry_init_number(char *title, char *format, int step, int *entry) {
 void entry_init_time(char *title, int *entry) {
 	state.entry_type = TIME;
 	state.time_type = TIME_NORMAL;
+	state.zero_allowed = false;
+
+	entry_init((char*) title, (int*) entry);
+}
+
+void entry_init_time_zero_allowed(char *title, int *entry) {
+	state.entry_type = TIME;
+	state.time_type = TIME_NORMAL;
+	state.zero_allowed = true;
 
 	entry_init((char*) title, (int*) entry);
 }
@@ -193,6 +204,7 @@ void entry_init_enum(char *title, char* (*lookup_function)(char *buf, int direct
 	state.lookup_function = lookup_function;
 	state.choices_count = choices_count;
 	state.step = 1;
+	state.zero_allowed = false;
 
 	entry_init((char*) title, (int*) entry);
 }
