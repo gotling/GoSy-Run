@@ -62,7 +62,7 @@ static int16_t menu_get_cell_height_callback(MenuLayer *menu_layer, MenuIndex *c
 					return interval_menu_height();
 			}
 		default:
-			return 44;
+			return MENU_CELL_BASIC_HEIGHT;
 	}
 }
 
@@ -80,8 +80,6 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 					break;
 				case 1:
 					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
-
-					
 					break;
 				default:
 					break;
