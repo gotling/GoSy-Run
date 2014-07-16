@@ -71,8 +71,28 @@ char *interval_tostring(char *output, int length) {
 		snprintf(erbuf, sizeof erbuf, " +%s/%d", extended_rest_time_text, interval_extended_rest_rounds);
 		strncat(output, erbuf, sizeof erbuf);
 	}
+
+	if (interval_warm_up > 0 || interval_cool_down > 0) {
+		char warm_up_text[7];
+		format_time(warm_up_text, interval_warm_up);
+
+		char cool_down_text[7];
+		format_time(cool_down_text, interval_cool_down);
+
+		char wcbuf[24];
+		snprintf(wcbuf, sizeof wcbuf, "\nWU: %s CD: %s", warm_up_text, cool_down_text);
+		strncat(output, wcbuf, sizeof wcbuf);
+	}
 	
 	return output;
+}
+
+int interval_menu_height() {
+	if (interval_warm_up > 0 || interval_cool_down > 0) {
+		return MENU_CELL_BASIC_MULTILINE_HEIGHT;
+	} else {
+		return MENU_CELL_BASIC_HEIGHT;
+	}
 }
 /*
 Example

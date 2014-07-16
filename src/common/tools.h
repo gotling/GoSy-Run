@@ -1,5 +1,6 @@
 #pragma once
 
+#define MENU_CELL_BASIC_HEIGHT 44
 #define MENU_CELL_BASIC_MULTILINE_HEIGHT 62
 
 char *format_time(char *formated_time, int seconds);

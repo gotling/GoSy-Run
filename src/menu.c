@@ -55,25 +55,15 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 }
 
 static int16_t menu_get_cell_height_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *callback_context) {
-	// switch (cell_index->section) {
-	// 	case 0:
-	// 		switch (cell_index->row) {
-	// 			case 0:
-	// 				return MENU_CELL_BASIC_MULTILINE_HEIGHT;
-	// 		}
-	// 	case 1:
-	// 		switch (cell_index->row) {
-	// 			case 0:
-	// 				return MENU_CELL_BASIC_MULTILINE_HEIGHT;
-	// 		}
-	// 	case 2:
-	// 		switch (cell_index->row) {
-	// 			case 0:
-	// 				return MENU_CELL_BASIC_MULTILINE_HEIGHT;
-	// 		}
-	// }
-
-	return 44;
+	switch (cell_index->section) {
+		case 0:
+			switch (cell_index->row) {
+				case 0:
+					return interval_menu_height();
+			}
+		default:
+			return 44;
+	}
 }
 
 static char timebuf[7];
