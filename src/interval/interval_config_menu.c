@@ -12,6 +12,7 @@ static Window *window;
 static TextLayer *header;
 static MenuLayer *menu_layer;
 static int second_menu_items = NUM_SECOND_MENU_ITEMS;
+void (*callback_function)(void);
 
 static uint16_t menu_get_num_sections_callback(MenuLayer *menu_layer, void *data) {
 	return NUM_MENU_SECTIONS;
@@ -186,16 +187,19 @@ static void window_unload(Window *window) {
 	text_layer_destroy(header);
 	menu_layer_destroy(menu_layer);
 	
+	callback_function();
+
 	window_destroy(window);
 }
 
-void interval_config_menu_init(void) {
+void interval_config_menu_init(void (*callback)(void)) {
 	window = window_create();
 	window_set_window_handlers(window, (WindowHandlers) {
 		.load = window_load,
 		.unload = window_unload,
 	});
 	const bool animated = true;
+	callback_function = callback;
 	window_stack_push(window, animated);
 }
 

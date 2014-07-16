@@ -73,15 +73,22 @@ char *interval_tostring(char *output, int length) {
 	}
 
 	if (interval_warm_up > 0 || interval_cool_down > 0) {
-		char warm_up_text[7];
-		format_time(warm_up_text, interval_warm_up);
+		strcat(output, "\n");
+		char wcbuf[12];
 
-		char cool_down_text[7];
-		format_time(cool_down_text, interval_cool_down);
+		if (interval_warm_up > 0) {
+			char warm_up_text[7];
+			format_time(warm_up_text, interval_warm_up);
+			snprintf(wcbuf, sizeof wcbuf, "WU: %s ", warm_up_text);
+			strncat(output, wcbuf, sizeof wcbuf);
+		}
 
-		char wcbuf[24];
-		snprintf(wcbuf, sizeof wcbuf, "\nWU: %s CD: %s", warm_up_text, cool_down_text);
-		strncat(output, wcbuf, sizeof wcbuf);
+		if (interval_cool_down > 0) {
+			char cool_down_text[7];
+			format_time(cool_down_text, interval_cool_down);
+			snprintf(wcbuf, sizeof wcbuf, "CD: %s ", cool_down_text);
+			strncat(output, wcbuf, sizeof wcbuf);
+		}
 	}
 	
 	return output;

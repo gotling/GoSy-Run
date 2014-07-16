@@ -80,8 +80,9 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 					break;
 				case 1:
 					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
-					break;
+
 					
+					break;
 				default:
 					break;
 			}
@@ -113,6 +114,10 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 	}
 }
 
+void reload_menu(void) {
+	menu_layer_reload_data(menu_layer);
+}
+
 static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
 	switch (cell_index->section) {
 		case 0:
@@ -120,9 +125,8 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 				case 0:
 					interval_init();
 					break;
-					
 				case 1:
-					interval_config_menu_init();
+					interval_config_menu_init(&reload_menu);
 					break;
 			}
 			break;
