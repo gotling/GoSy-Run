@@ -72,18 +72,18 @@ char *interval_tostring(char *output, int length) {
 		strncat(output, erbuf, sizeof erbuf);
 	}
 
-	if (interval_warm_up > 0 || interval_cool_down > 0) {
+	if (interval_warm_up || interval_cool_down) {
 		strcat(output, "\n");
 		char wcbuf[12];
 
-		if (interval_warm_up > 0) {
+		if (interval_warm_up) {
 			char warm_up_text[7];
 			format_time(warm_up_text, interval_warm_up);
 			snprintf(wcbuf, sizeof wcbuf, "WU: %s ", warm_up_text);
 			strncat(output, wcbuf, sizeof wcbuf);
 		}
 
-		if (interval_cool_down > 0) {
+		if (interval_cool_down) {
 			char cool_down_text[7];
 			format_time(cool_down_text, interval_cool_down);
 			snprintf(wcbuf, sizeof wcbuf, "CD: %s ", cool_down_text);
@@ -95,7 +95,7 @@ char *interval_tostring(char *output, int length) {
 }
 
 int interval_menu_height() {
-	if (interval_warm_up > 0 || interval_cool_down > 0) {
+	if (interval_warm_up || interval_cool_down) {
 		return MENU_CELL_BASIC_MULTILINE_HEIGHT;
 	} else {
 		return MENU_CELL_BASIC_HEIGHT;
