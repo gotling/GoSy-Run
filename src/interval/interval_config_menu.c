@@ -4,7 +4,7 @@
 #include "../common/tools.h"
 
 #define NUM_MENU_SECTIONS 3
-#define NUM_FIRST_MENU_ITEMS 3
+#define NUM_FIRST_MENU_ITEMS 4
 #define NUM_SECOND_MENU_ITEMS 1
 #define NUM_THIRD_MENU_ITEMS 2
 
@@ -48,7 +48,7 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 			menu_cell_basic_header_draw(ctx, cell_layer, "Extended Recovery");
 			break;
 		case 2:
-			menu_cell_basic_header_draw(ctx, cell_layer, "Warm up & Cool down");
+			menu_cell_basic_header_draw(ctx, cell_layer, "Warm Up & Cool Down");
 			break;
 	}
 }
@@ -70,6 +70,14 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 				case 2:
 					snprintf(subbuf, 12, "%d", interval_rounds);
 					menu_cell_basic_draw(ctx, cell_layer, "Repeat", subbuf, NULL);
+					break;
+				case 3:
+					if (interval_rest_after_last_workout) {
+						strcpy(subbuf, "Enabled");
+					} else {
+						strcpy(subbuf, "Disabled");
+					}
+					menu_cell_basic_draw(ctx, cell_layer, "End with Recover", subbuf, NULL);
 					break;
 			}
 			break;
@@ -96,11 +104,11 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 			switch (cell_index->row) {
 				case 0:
 					format_time_long(subbuf, interval_warm_up);
-					menu_cell_basic_draw(ctx, cell_layer, "Warm up", subbuf, NULL);
+					menu_cell_basic_draw(ctx, cell_layer, "Warm Up", subbuf, NULL);
 					break;
 				case 1:
 					format_time_long(subbuf, interval_cool_down);
-					menu_cell_basic_draw(ctx, cell_layer, "Cool down", subbuf, NULL);
+					menu_cell_basic_draw(ctx, cell_layer, "Cool Down", subbuf, NULL);
 					break;
 			}
 	}
@@ -120,6 +128,14 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 				case 2:
 					entry_init_number("Rounds", "%d rounds", 1, &interval_rounds);
 					break;
+				case 3:
+					if (interval_rest_after_last_workout) {
+						interval_rest_after_last_workout = false;
+					} else {
+						interval_rest_after_last_workout = true;
+					}
+					menu_layer_reload_data(menu_layer);
+					menu_layer_set_selected_index(menu_layer, menu_layer_get_selected_index(menu_layer), MenuRowAlignCenter, true);
 			}
 			break;
 		case 1:
@@ -148,10 +164,10 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 		case 2:
 			switch (cell_index->row) {
 				case 0:
-					entry_init_time_zero_allowed("Warm up", &interval_warm_up);
+					entry_init_time_zero_allowed("Warm Up", &interval_warm_up);
 					break;
 				case 1:
-					entry_init_time_zero_allowed("Cool down", &interval_cool_down);
+					entry_init_time_zero_allowed("Cool Down", &interval_cool_down);
 					break;
 			}
 			break;

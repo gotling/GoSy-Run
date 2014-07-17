@@ -91,7 +91,7 @@ static void timer_callback(void *data) {
 
 	// Switch between states 
 	if (state.round_time == 0) {
-		if (state.round < interval_rounds) {
+		if (state.round < interval_rounds || (interval_rest_after_last_workout && state.activity == WORKOUT)) {
 			if (state.activity == WARM_UP) {
 				state.activity = WORKOUT;
 				state.round_time = interval_workout_time;
