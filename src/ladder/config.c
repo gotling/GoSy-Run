@@ -64,6 +64,9 @@ char* ladder_direction_to_string(char *buf, int direction) {
 		case ASC_DESC:
 			strcpy(buf, "Asc-Desc");
 			break;
+		case DESC_ASC:
+			strcpy(buf, "Desc-Asc");
+			break;
 	}
 
 	return buf;
@@ -72,6 +75,7 @@ char* ladder_direction_to_string(char *buf, int direction) {
 int ladder_get_step_count() {
 	switch (ladder_direction) {
 		case ASC_DESC:
+		case DESC_ASC:
 			return (ladder_max_time / ladder_step_time) * 2 - 1;
 		default:
 			return ladder_max_time / ladder_step_time;
@@ -92,12 +96,20 @@ int *ladder_set_up(int *round_time) {
 				round_time[i] =  ((i + 1) * ladder_step_time);
 			}
 			for (int i = rounds; i < (rounds * 2) - 1; ++i) {
-				round_time[i] = ladder_max_time - ((i - (rounds - 1)) * ladder_step_time);
+				round_time[i] = round_time[i - 1] - ladder_step_time;
 			}
 			break;
 		case DESC:
 			for (int i = 0; i < rounds; ++i) {
 				round_time[i] = ladder_max_time - (i * ladder_step_time);
+			}
+			break;
+		case DESC_ASC:
+			for (int i = 0; i < rounds; ++i) {
+				round_time[i] = ladder_max_time - (i * ladder_step_time);
+			}
+			for (int i = rounds; i < (rounds * 2) - 1; ++i) {
+				round_time[i] =  round_time[i - 1] + ladder_step_time;
 			}
 			break;
 	}
@@ -130,6 +142,7 @@ char *ladder_tostring(char *output, int length) {
 				snprintf(fatlek_text, sizeof fatlek_text, "%d-%d..%d", round_time[0], round_time[1], round_time[rounds-1]);
 				break;
 			case ASC_DESC:
+			case DESC_ASC:
 				if (rounds % 2 == 0) {
 					snprintf(fatlek_text, sizeof fatlek_text, "%d..%d-%d..%d", round_time[0], round_time[rounds / 2 - 1], round_time[rounds / 2], round_time[rounds-1]);
 				} else {
