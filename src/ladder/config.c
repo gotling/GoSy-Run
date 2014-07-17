@@ -38,11 +38,9 @@ void ladder_read_persistent() {
 	ladder_extended_slow_time = persist_exists(EXTENDED_SLOW_TIME_PKEY) ? persist_read_int(EXTENDED_SLOW_TIME_PKEY) : EXTENDED_SLOW_TIME_DEFAULT;
 	ladder_extended_slow_rounds = persist_exists(EXTENDED_SLOW_ROUNDS_PKEY) ? persist_read_int(EXTENDED_SLOW_ROUNDS_PKEY) : EXTENDED_SLOW_ROUNDS_DEFAULT;
 	ladder_direction = persist_exists(LADDER_DIRECTION_PKEY) ? persist_read_int(LADDER_DIRECTION_PKEY) : LADDER_DIRECTION_DEFAULT;
-	//APP_LOG(APP_LOG_LEVEL_DEBUG, "Ladder Read. Step %d, Max %d", ladder_step_time, ladder_max_time);
 }
 
 void ladder_write_persistent() {
-	//APP_LOG(APP_LOG_LEVEL_DEBUG, "Ladder Write. Step %d, Max %d", ladder_step_time, ladder_max_time);
 	persist_write_int(STEP_TIME_PKEY, ladder_step_time);
 	persist_write_int(MAX_TIME_PKEY, ladder_max_time);
 	persist_write_int(SLOW_TIME_PKEY, ladder_slow_time);

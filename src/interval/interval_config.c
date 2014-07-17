@@ -31,6 +31,7 @@ int interval_cool_down = COOL_DOWN_DEFAULT;
 
 void interval_read_persistent() {
 	interval_workout_time = persist_exists(WORKOUT_TIME_PKEY) ? persist_read_int(WORKOUT_TIME_PKEY) : WORKOUT_TIME_DEFAULT;
+	//APP_LOG(APP_LOG_LEVEL_DEBUG, "Read configuration. Interval workout time: %d", interval_workout_time);
 	interval_rest_time = persist_exists(REST_TIME_PKEY) ? persist_read_int(REST_TIME_PKEY) : REST_TIME_DEFAULT;
 	interval_rounds = persist_exists(ROUNDS_PKEY) ? persist_read_int(ROUNDS_PKEY) : ROUNDS_DEFAULT;
 	interval_extended_rest = persist_exists(EXTENDED_REST_PKEY) ? persist_read_bool(EXTENDED_REST_PKEY) : EXTENDED_REST_DEFAULT;
@@ -42,6 +43,7 @@ void interval_read_persistent() {
 
 void interval_write_persistent() {
 	persist_write_int(WORKOUT_TIME_PKEY, interval_workout_time);
+	//APP_LOG(APP_LOG_LEVEL_DEBUG, "Write configuration. Interval workout time: %d", interval_workout_time);
 	persist_write_int(REST_TIME_PKEY, interval_rest_time);
 	persist_write_int(ROUNDS_PKEY, interval_rounds);
 	persist_write_bool(EXTENDED_REST_PKEY, interval_extended_rest);
