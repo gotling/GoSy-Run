@@ -6,10 +6,10 @@ Features
 ----------------
 
 ### Interval timer
-Configurable with extended rest
+Configurable with extended rest, warm up and cool down
 
 ### Ladder timer
-Ascending, Descending or Ascending and Descending
+Ascending, Descending, Ascending-Descending and Descending-Ascending
 
 ### Stretch timer
 With 8 stretch types
@@ -20,6 +20,11 @@ Planned
 
 History
 ----------------
+1.5 - NOT RELEASED
+* Add warm up and cool down to Interval timer
+* Add Descending-Ascending mode to Ladder timer
+* Built for firmware 2.3
+
 1.4
 * Added Ladder timer
 * Show total time in main menu
