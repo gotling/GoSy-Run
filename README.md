@@ -22,8 +22,9 @@ History
 ----------------
 1.5 - NOT RELEASED
 * Add warm up and cool down to Interval timer
-* Add setting to rest after last workout
+* Add setting to rest after last workout in Interval timer
 * Add Descending-Ascending mode to Ladder timer
+* Make end vibration more distinct
 * Built for firmware 2.3
 
 1.4

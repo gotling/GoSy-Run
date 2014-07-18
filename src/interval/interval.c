@@ -119,12 +119,7 @@ static void timer_callback(void *data) {
 				state.round_time = interval_cool_down;
 			} else {
 				state.activity = FINISHED;
-				static const uint32_t const segments[] = { 200, 100, 400, 100, 600 };
-				VibePattern pattern = {
-					.durations = segments,
-					.num_segments = ARRAY_LENGTH(segments),
-				};
-				vibes_enqueue_custom_pattern(pattern);
+				vibes_enqueue_custom_pattern(end_vibration);
 				state.active = false;
 				app_timer_cancel(state.timer);
 				state.timer = NULL;

@@ -124,7 +124,7 @@ static void timer_callback(void *data) {
 			}
 		} else {
 			state.activity = FINISHED;
-			vibes_double_pulse();
+			vibes_enqueue_custom_pattern(end_vibration);
 			state.active = false;
 			app_timer_cancel(state.timer);
 			state.timer = NULL;
