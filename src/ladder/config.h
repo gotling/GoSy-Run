@@ -3,7 +3,8 @@
 typedef enum {
 	ASC = 1,
 	ASC_DESC,
-	DESC
+	DESC,
+	DESC_ASC
 } LadderDirection;
 
 extern int ladder_step_time;

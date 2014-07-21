@@ -55,25 +55,15 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 }
 
 static int16_t menu_get_cell_height_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *callback_context) {
-	// switch (cell_index->section) {
-	// 	case 0:
-	// 		switch (cell_index->row) {
-	// 			case 0:
-	// 				return MENU_CELL_BASIC_MULTILINE_HEIGHT;
-	// 		}
-	// 	case 1:
-	// 		switch (cell_index->row) {
-	// 			case 0:
-	// 				return MENU_CELL_BASIC_MULTILINE_HEIGHT;
-	// 		}
-	// 	case 2:
-	// 		switch (cell_index->row) {
-	// 			case 0:
-	// 				return MENU_CELL_BASIC_MULTILINE_HEIGHT;
-	// 		}
-	// }
-
-	return 44;
+	switch (cell_index->section) {
+		case 0:
+			switch (cell_index->row) {
+				case 0:
+					return interval_menu_height();
+			}
+		default:
+			return MENU_CELL_BASIC_HEIGHT;
+	}
 }
 
 static char timebuf[7];
@@ -91,7 +81,6 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 				case 1:
 					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
 					break;
-					
 				default:
 					break;
 			}
@@ -123,6 +112,10 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 	}
 }
 
+static void reload_menu(void) {
+	menu_layer_reload_data(menu_layer);
+}
+
 static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
 	switch (cell_index->section) {
 		case 0:
@@ -130,9 +123,8 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 				case 0:
 					interval_init();
 					break;
-					
 				case 1:
-					interval_config_menu_init();
+					interval_config_menu_init(&reload_menu);
 					break;
 			}
 			break;

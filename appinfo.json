@@ -3,8 +3,8 @@
   "shortName": "GoSy Run",
   "longName": "GoSy Run",
   "companyName": "Gotling System AB",
-  "versionCode": 5,
-  "versionLabel": "1.4.0",
+  "versionCode": 6,
+  "versionLabel": "1.5.0",
   "watchapp": {
     "watchface": false
   },

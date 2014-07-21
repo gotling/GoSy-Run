@@ -1,5 +1,6 @@
 #include <pebble.h>
 #include "stretch_config.h"
+#include "../common/tools.h"
 
 static struct StretchUi {
 	Window *window;
@@ -93,7 +94,7 @@ static void update_ui() {
 			layer_set_frame(image_layer, image_frame);
 			bitmap_layer_set_bitmap(ui.image, image.checkmark);
 			
-			vibes_double_pulse();
+			vibes_enqueue_custom_pattern(end_vibration);
 			state.running = 0;
 			app_timer_cancel(state.timer);
 			state.timer = NULL;

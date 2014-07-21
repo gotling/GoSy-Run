@@ -3,14 +3,16 @@
 #include "../common/entry.h"
 #include "../common/tools.h"
 
-#define NUM_MENU_SECTIONS 2
-#define NUM_FIRST_MENU_ITEMS 3
+#define NUM_MENU_SECTIONS 3
+#define NUM_FIRST_MENU_ITEMS 4
 #define NUM_SECOND_MENU_ITEMS 1
+#define NUM_THIRD_MENU_ITEMS 2
 
 static Window *window;
 static TextLayer *header;
 static MenuLayer *menu_layer;
 static int second_menu_items = NUM_SECOND_MENU_ITEMS;
+void (*callback_function)(void);
 
 static uint16_t menu_get_num_sections_callback(MenuLayer *menu_layer, void *data) {
 	return NUM_MENU_SECTIONS;
@@ -26,6 +28,8 @@ static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t secti
 			} else {
 				return 1;
 			}
+		case 2:
+			return NUM_THIRD_MENU_ITEMS;
 		default:
 			return 0;
 	}
@@ -43,6 +47,9 @@ static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, ui
 		case 1:
 			menu_cell_basic_header_draw(ctx, cell_layer, "Extended Recovery");
 			break;
+		case 2:
+			menu_cell_basic_header_draw(ctx, cell_layer, "Warm Up & Cool Down");
+			break;
 	}
 }
 
@@ -57,13 +64,20 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 					menu_cell_basic_draw(ctx, cell_layer, "Workout", subbuf, NULL);
 					break;
 				case 1:
-					
 					format_time_long(subbuf, interval_rest_time);
 					menu_cell_basic_draw(ctx, cell_layer, "Recover", subbuf, NULL);
 					break;
 				case 2:
 					snprintf(subbuf, 12, "%d", interval_rounds);
 					menu_cell_basic_draw(ctx, cell_layer, "Repeat", subbuf, NULL);
+					break;
+				case 3:
+					if (interval_rest_after_last_workout) {
+						strcpy(subbuf, "Enabled");
+					} else {
+						strcpy(subbuf, "Disabled");
+					}
+					menu_cell_basic_draw(ctx, cell_layer, "End with Recover", subbuf, NULL);
 					break;
 			}
 			break;
@@ -86,6 +100,17 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 					break;
 			}
 			break;
+		case 2:
+			switch (cell_index->row) {
+				case 0:
+					format_time_long(subbuf, interval_warm_up);
+					menu_cell_basic_draw(ctx, cell_layer, "Warm Up", subbuf, NULL);
+					break;
+				case 1:
+					format_time_long(subbuf, interval_cool_down);
+					menu_cell_basic_draw(ctx, cell_layer, "Cool Down", subbuf, NULL);
+					break;
+			}
 	}
 }
 
@@ -103,6 +128,13 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 				case 2:
 					entry_init_number("Rounds", "%d rounds", 1, &interval_rounds);
 					break;
+				case 3:
+					if (interval_rest_after_last_workout) {
+						interval_rest_after_last_workout = false;
+					} else {
+						interval_rest_after_last_workout = true;
+					}
+					menu_layer_reload_data(menu_layer);
 			}
 			break;
 		case 1:
@@ -128,7 +160,16 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 					break;
 			}
 			break;
-
+		case 2:
+			switch (cell_index->row) {
+				case 0:
+					entry_init_time_zero_allowed("Warm Up", &interval_warm_up);
+					break;
+				case 1:
+					entry_init_time_zero_allowed("Cool Down", &interval_cool_down);
+					break;
+			}
+			break;
 	}
 }
 
@@ -161,16 +202,19 @@ static void window_unload(Window *window) {
 	text_layer_destroy(header);
 	menu_layer_destroy(menu_layer);
 	
+	callback_function();
+
 	window_destroy(window);
 }
 
-void interval_config_menu_init(void) {
+void interval_config_menu_init(void (*callback)(void)) {
 	window = window_create();
 	window_set_window_handlers(window, (WindowHandlers) {
 		.load = window_load,
 		.unload = window_unload,
 	});
 	const bool animated = true;
+	callback_function = callback;
 	window_stack_push(window, animated);
 }
 

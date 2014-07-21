@@ -2,7 +2,7 @@
 #include "interval_config.h"
 #include "../common/tools.h"
 
-enum _activity { WORKOUT, REST, EXTENDE_REST, FINISHED, PAUSED };
+enum _activity { WARM_UP, WORKOUT, REST, EXTENDE_REST, COOL_DOWN, FINISHED, PAUSED };
 
 static struct IntervalUi {
 	Window *window;
@@ -55,6 +55,9 @@ static void update_ui() {
 	}
 	
 	switch (state.activity) {
+		case WARM_UP:
+			text_layer_set_text(ui.top_text, "Warm Up");
+			break;
 		case WORKOUT:
 			text_layer_set_text(ui.top_text, "Workout");
 			break;
@@ -63,6 +66,10 @@ static void update_ui() {
 			break;
 		case EXTENDE_REST:
 			text_layer_set_text(ui.top_text, "Ext. Recovery");
+			break;
+		case COOL_DOWN:
+			text_layer_set_text(ui.top_text, "Cool Down");
+			text_layer_set_text(ui.middle_text, "");
 			break;
 		case PAUSED:
 			text_layer_set_text(ui.top_text, "PAUSED");
@@ -84,8 +91,12 @@ static void timer_callback(void *data) {
 
 	// Switch between states 
 	if (state.round_time == 0) {
-		if (state.round < interval_rounds) {
-			if (state.activity == WORKOUT) {
+		if (state.round < interval_rounds || (interval_rest_after_last_workout && state.activity == WORKOUT)) {
+			if (state.activity == WARM_UP) {
+				state.activity = WORKOUT;
+				state.round_time = interval_workout_time;
+				vibes_long_pulse();
+			} else if (state.activity == WORKOUT) {
 				if (interval_extended_rest && state.round % interval_extended_rest_rounds == 0) {
 					state.activity = EXTENDE_REST;
 					state.round_time = interval_extended_rest_time;
@@ -98,15 +109,21 @@ static void timer_callback(void *data) {
 			} else {
 				state.activity = WORKOUT;
 				state.round++;
-				state.round_time = interval_workout_time;      
+				state.round_time = interval_workout_time;
 				vibes_long_pulse();
 			}
 		} else {
-			state.activity = FINISHED;
-			vibes_double_pulse();
-			state.active = false;
-			app_timer_cancel(state.timer);
-			state.timer = NULL;
+			if (interval_cool_down && state.activity != COOL_DOWN) {
+				vibes_long_pulse();
+				state.activity = COOL_DOWN;
+				state.round_time = interval_cool_down;
+			} else {
+				state.activity = FINISHED;
+				vibes_enqueue_custom_pattern(end_vibration);
+				state.active = false;
+				app_timer_cancel(state.timer);
+				state.timer = NULL;
+			}
 		}
 		
 		update_ui();
@@ -153,10 +170,15 @@ static void reset() {
 		state.timer = NULL;
 	}
 	
-	state.activity = WORKOUT;
+	if (interval_warm_up) {
+		state.activity = WARM_UP;
+		state.round_time = interval_warm_up;
+	} else {
+		state.activity = WORKOUT;
+		state.round_time = interval_workout_time;
+	}
 	state.active = false;
 	state.round = 1;
-	state.round_time = interval_workout_time;
 	state.total_time = 0;
 	
 	update_ui();

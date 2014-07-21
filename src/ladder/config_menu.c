@@ -109,7 +109,7 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					entry_init_enum("Direction", &ladder_direction_to_string, 3, (int*)&ladder_direction);
+					entry_init_enum("Direction", &ladder_direction_to_string, 4, (int*)&ladder_direction);
 					break;
 				case 1:
 					entry_init_time_callback("Shortest", &ladder_step_time, &step_updated);
