@@ -135,7 +135,6 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 						interval_rest_after_last_workout = true;
 					}
 					menu_layer_reload_data(menu_layer);
-					menu_layer_set_selected_index(menu_layer, menu_layer_get_selected_index(menu_layer), MenuRowAlignCenter, true);
 			}
 			break;
 		case 1:
