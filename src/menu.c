@@ -112,7 +112,7 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 	}
 }
 
-void reload_menu(void) {
+static void reload_menu(void) {
 	menu_layer_reload_data(menu_layer);
 }
 
