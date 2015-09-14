@@ -9,14 +9,14 @@
 #include "ladder/config.h"
 #include "ladder/config_menu.h"
 #include "common/tools.h"
-#include "config_menu.h"
 
 #define NUM_MENU_SECTIONS 0
-#define NUM_FIRST_MENU_ITEMS 4
+#define NUM_FIRST_MENU_ITEMS 3
 
 static Window *window;
 static TextLayer *header;
 static MenuLayer *menu_layer;
+void (*callback_function)(void);
 
 static uint16_t menu_get_num_sections_callback(MenuLayer *menu_layer, void *data) {
 	return NUM_MENU_SECTIONS;
@@ -32,49 +32,27 @@ static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t secti
 }
 
 static int16_t menu_get_cell_height_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *callback_context) {
-	switch (cell_index->section) {
-		case 0:
-			switch (cell_index->row) {
-				case 0:
-					return interval_menu_height();
-			}
-		default:
-			return MENU_CELL_BASIC_HEIGHT;
-	}
+	return MENU_CELL_BASIC_HEIGHT;
 }
-
-static char timebuf[7];
-static char subbuf[40];
 
 static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
 	switch (cell_index->section) {
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					format_time(timebuf, interval_get_total_time());
-					interval_tostring(subbuf, sizeof subbuf);
-					menu_cell_basic_draw_multiline_with_extra_title(ctx, cell_layer, "Interval", timebuf, subbuf, NULL);
+					menu_cell_basic_draw(ctx, cell_layer, "Interval", NULL, NULL);
 					break;
 				case 1:
-					format_time(timebuf, ladder_get_total_time());
-					ladder_tostring(subbuf, sizeof subbuf);
-					menu_cell_basic_draw_multiline_with_extra_title(ctx, cell_layer, "Ladder", timebuf, subbuf, NULL);
+					menu_cell_basic_draw(ctx, cell_layer, "Ladder", NULL, NULL);
 					break;
 				case 2:
-					format_time(timebuf, stretch_get_total_time());
-					stretch_tostring(subbuf, sizeof subbuf);
-					menu_cell_basic_draw_multiline_with_extra_title(ctx, cell_layer, "Stretch", timebuf, subbuf, NULL);
+					menu_cell_basic_draw(ctx, cell_layer, "Stretch", NULL, NULL);
 					break;
-				case 3:
-					menu_cell_basic_draw(ctx, cell_layer, "Configure", NULL, NULL);
+				default:
 					break;
 			}
 			break;
 	}
-}
-
-static void reload_menu(void) {
-	menu_layer_reload_data(menu_layer);
 }
 
 static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
@@ -82,19 +60,16 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					interval_init();
+					interval_config_menu_init();
 					break;
 				case 1:
-					ladder_init();
+					ladder_config_menu_init();
 					break;
 				case 2:
-					stretch_init();
-					break;
-				case 3:
-					config_menu_init(&reload_menu);
+					stretch_config_menu_init();
 					break;
 			}
-			break;
+		break;
 	}
 }
 
@@ -103,7 +78,7 @@ static void window_load(Window *window) {
 	GRect bounds = layer_get_frame(window_layer);
 
 	header = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, 32 } });
-	text_layer_set_text(header, "GoSy Run");
+	text_layer_set_text(header, "Settings");
 	text_layer_set_text_alignment(header, GTextAlignmentCenter);
 	text_layer_set_font(header, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
 	layer_add_child(window_layer, text_layer_get_layer(header));
@@ -124,23 +99,22 @@ static void window_load(Window *window) {
 static void window_unload(Window *window) {
 	text_layer_destroy(header);
 	menu_layer_destroy(menu_layer);
+
+	callback_function();
 }
 
-void menu_init(void) {
+void config_menu_init(void (*callback)(void)) {
 	window = window_create();
 	window_set_window_handlers(window, (WindowHandlers) {
 		.load = window_load,
 		.unload = window_unload,
 	});
 	
-	interval_read_persistent();
-	ladder_read_persistent();
-	stretch_read_persistent();
-	
 	const bool animated = true;
+	callback_function = callback;
 	window_stack_push(window, animated);
 }
 
-void menu_deinit(void) {
+void config_menu_deinit(void) {
 	window_destroy(window);
 }
