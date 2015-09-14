@@ -222,7 +222,7 @@ static void window_load(Window *window) {
 	
 	image.checkmark = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CHECKMARK);
 	
-	GRect image_frame = (GRect) { .size = image.checkmark->bounds.size };
+	GRect image_frame = gbitmap_get_bounds(image.checkmark);
 	image_frame.origin.x = (bounds.size.w / 2) - 32;
 	image_frame.origin.y = (bounds.size.h / 2) - 32;
 	ui.image = bitmap_layer_create(image_frame);

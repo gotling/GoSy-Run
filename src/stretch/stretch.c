@@ -208,7 +208,7 @@ static void window_load(Window *window) {
 	image.chest_and_arm = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CHEST_AND_ARM);
 	image.calf = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CALF);
 	
-	GRect image_frame = (GRect) { .size = image.checkmark->bounds.size };
+	GRect image_frame = gbitmap_get_bounds(image.checkmark);
 	image_frame.origin.x = 72;
 	image_frame.origin.y = 84;
 	ui.image = bitmap_layer_create(image_frame);

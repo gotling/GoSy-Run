@@ -183,7 +183,7 @@ static void window_load(Window *window) {
 	text_layer_set_font(header, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
 	layer_add_child(window_layer, text_layer_get_layer(header));
 	
-	menu_layer = menu_layer_create((GRect) { .origin = { 0, 40 }, .size = { bounds.size.w, 114 } });
+	menu_layer = menu_layer_create((GRect) { .origin = { 0, 40 }, .size = { bounds.size.w, MENU_HEIGHT } });
 	menu_layer_set_callbacks(menu_layer, NULL, (MenuLayerCallbacks){
 		.get_num_sections = menu_get_num_sections_callback,
 		.get_num_rows = menu_get_num_rows_callback,
