@@ -7,17 +7,26 @@ typedef enum {
 	DESC_ASC
 } LadderDirection;
 
-extern int ladder_step_time;
-extern int ladder_max_time;
-extern int ladder_slow_time;
-extern int ladder_rounds;
-extern bool ladder_extended_slow;
-extern int ladder_extended_slow_time;
-extern int ladder_extended_slow_rounds;
-extern LadderDirection ladder_direction;
+typedef struct {
+	int active;
+	int slow_time;
+	int rounds;
+} ExtendedSlow;
 
-void ladder_read_persistent();
-void ladder_write_persistent();
+typedef struct {
+	int step_time;
+	int max_time;
+	int slow_time;
+	int rounds;
+	LadderDirection direction;
+	ExtendedSlow extended_slow;
+} LadderSettings;
+
+extern LadderSettings ladder_settings;
+
+void ladder_persist_read(int pkey);
+void ladder_persist_write(int pkey);
+void ladder_persist_migrate(int pkey, int version);
 
 int ladder_get_step_count();
 int *ladder_set_up(int *round_time);

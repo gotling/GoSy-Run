@@ -135,7 +135,6 @@ void menu_init(void) {
 	});
 	
 	persist_read();
-	ladder_read_persistent();
 	
 	const bool animated = true;
 	window_stack_push(window, animated);

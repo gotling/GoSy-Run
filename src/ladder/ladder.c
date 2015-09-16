@@ -1,6 +1,7 @@
 #include <pebble.h>
 #include "config.h"
-#include "../common/tools.h"
+#include "common/tools.h"
+#include "common/storage.h"
 
 // REPEAT, SET
 
@@ -63,7 +64,7 @@ static void update_time_ui() {
 static void update_ui() {
 	if (state.activity == FAST || state.activity == SLOW 
 		|| state.activity == EXTENDED_SLOW) {
-		snprintf(buf, sizeof buf, "Round %d:%d/%d:%d", (round_iterator + 1), state.round, rounds, ladder_rounds);
+		snprintf(buf, sizeof buf, "Round %d:%d/%d:%d", (round_iterator + 1), state.round, rounds, ladder_settings.rounds);
 		text_layer_set_text(ui.middle_text, buf);
 	}
 	
@@ -97,14 +98,14 @@ static void timer_callback(void *data) {
 
 	// Switch between states 
 	if (state.round_time == 0) {
-		if (state.round < ladder_rounds || round_iterator < (rounds - 1)) {
+		if (state.round < ladder_settings.rounds || round_iterator < (rounds - 1)) {
 			if (state.activity == FAST) {
 				/*if (interval_extended_slow && state.round % interval_extended_slow_rounds == 0) {
 					state.activity = EXTENDED_SLOW;
 					state.round_time = interval_extended_slow_time;
 				} else { */
 					state.activity = SLOW;
-					state.round_time = ladder_slow_time;
+					state.round_time = ladder_settings.slow_time;
 				//}
 				
 				vibes_long_pulse();
