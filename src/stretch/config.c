@@ -26,11 +26,12 @@ void stretch_persist_write(int pkey) {
 static void stretch_persist_reset(int pkey) {
 	stretch_settings.time = STRETCH_TIME_DEFAULT;
 	stretch_settings.prepare = PREPARE_TIME_DEFAULT;
+	
 	stretch_persist_write(pkey);
 }
 
 void stretch_persist_migrate(int pkey, int version) {
-	switch(version) {
+	switch (version) {
 		case 0:
 			APP_LOG(APP_LOG_LEVEL_DEBUG, "stretch:persist:migrate - unknown version, resetting settings");
 			stretch_persist_reset(pkey);
@@ -41,6 +42,8 @@ void stretch_persist_migrate(int pkey, int version) {
 			#define PREPARE_TIME_PKEY 11
 			stretch_settings.time = persist_exists(STRETCH_TIME_PKEY) ? persist_read_int(STRETCH_TIME_PKEY) : STRETCH_TIME_DEFAULT;
 			stretch_settings.prepare = persist_exists(PREPARE_TIME_PKEY) ? persist_read_int(PREPARE_TIME_PKEY) : PREPARE_TIME_DEFAULT;
+
+			stretch_persist_write(pkey);
 			break;
 		default:
 			APP_LOG(APP_LOG_LEVEL_DEBUG, "stretch:persist:migrate - already up to date");

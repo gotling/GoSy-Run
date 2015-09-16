@@ -135,7 +135,6 @@ void menu_init(void) {
 	});
 	
 	persist_read();
-	interval_read_persistent();
 	ladder_read_persistent();
 	
 	const bool animated = true;

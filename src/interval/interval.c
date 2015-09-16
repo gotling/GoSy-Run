@@ -50,7 +50,7 @@ static void update_time_ui() {
 static void update_ui() {
 	if (state.activity == WORKOUT || state.activity == REST 
 		|| state.activity == EXTENDE_REST) {
-		snprintf(buf, 12, "Round %d/%d", state.round, interval_rounds);
+		snprintf(buf, 12, "Round %d/%d", state.round, interval_settings.rounds);
 		text_layer_set_text(ui.middle_text, buf);
 	}
 	
@@ -91,32 +91,32 @@ static void timer_callback(void *data) {
 
 	// Switch between states 
 	if (state.round_time == 0) {
-		if (state.round < interval_rounds || (interval_rest_after_last_workout && state.activity == WORKOUT)) {
+		if (state.round < interval_settings.rounds || (interval_settings.rest_after_last_workout && state.activity == WORKOUT)) {
 			if (state.activity == WARM_UP) {
 				state.activity = WORKOUT;
-				state.round_time = interval_workout_time;
+				state.round_time = interval_settings.workout_time;
 				vibes_long_pulse();
 			} else if (state.activity == WORKOUT) {
-				if (interval_extended_rest && state.round % interval_extended_rest_rounds == 0) {
+				if (interval_settings.extended_rest.active && state.round % interval_settings.extended_rest.rounds == 0) {
 					state.activity = EXTENDE_REST;
-					state.round_time = interval_extended_rest_time;
+					state.round_time = interval_settings.extended_rest.rest_time;
 				} else {
 					state.activity = REST;
-					state.round_time = interval_rest_time;
+					state.round_time = interval_settings.rest_time;
 				}
 				
 				vibes_long_pulse();
 			} else {
 				state.activity = WORKOUT;
 				state.round++;
-				state.round_time = interval_workout_time;
+				state.round_time = interval_settings.workout_time;
 				vibes_long_pulse();
 			}
 		} else {
-			if (interval_cool_down && state.activity != COOL_DOWN) {
+			if (interval_settings.cool_down && state.activity != COOL_DOWN) {
 				vibes_long_pulse();
 				state.activity = COOL_DOWN;
-				state.round_time = interval_cool_down;
+				state.round_time = interval_settings.cool_down;
 			} else {
 				state.activity = FINISHED;
 				vibes_enqueue_custom_pattern(end_vibration);
@@ -170,12 +170,12 @@ static void reset() {
 		state.timer = NULL;
 	}
 	
-	if (interval_warm_up) {
+	if (interval_settings.warm_up) {
 		state.activity = WARM_UP;
-		state.round_time = interval_warm_up;
+		state.round_time = interval_settings.warm_up;
 	} else {
 		state.activity = WORKOUT;
-		state.round_time = interval_workout_time;
+		state.round_time = interval_settings.workout_time;
 	}
 	state.active = false;
 	state.round = 1;

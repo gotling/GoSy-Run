@@ -1,12 +1,15 @@
 #include <pebble.h>
 #include "storage.h"
 #include "stretch/config.h"
+#include "interval/config.h"
 
 #define STORAGE_VERSION_PKEY 30
-#define CURRENT_STORAGE_VERSION 7
 #define STRETCH_PKEY 31
+#define INTERVAL_PKEY 32
 
-int persist_version(void) {
+#define CURRENT_STORAGE_VERSION 7
+
+static int persist_version(void) {
     uint32_t version = persist_read_int(STORAGE_VERSION_PKEY);
     
     if (version == 0) {
@@ -26,7 +29,7 @@ static void persist_version_set(int version) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "persist:version:set - pkey: %d, version: %d", STORAGE_VERSION_PKEY, version);
 }
 
-int persist_current_version(void) {
+static int persist_current_version(void) {
     return CURRENT_STORAGE_VERSION;
 }
 
@@ -39,6 +42,7 @@ static void persist_migrate(void) {
 
     APP_LOG(APP_LOG_LEVEL_DEBUG, "persist:migrate - v%d to v%d", version, persist_current_version());
     stretch_persist_migrate(STRETCH_PKEY, version);
+    interval_persist_migrate(INTERVAL_PKEY, version);
 
     //persist_version_set(persist_current_version());
 }
@@ -47,8 +51,13 @@ void persist_stretch_write(void) {
     stretch_persist_write(STRETCH_PKEY);
 }
 
+void persist_interval_write(void) {
+    interval_persist_write(INTERVAL_PKEY);
+}
+
 void persist_read(void) {
     persist_migrate();
 
     stretch_persist_read(STRETCH_PKEY);
+    interval_persist_read(INTERVAL_PKEY);
 }

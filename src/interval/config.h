@@ -1,17 +1,26 @@
 #pragma once
 
-extern int interval_workout_time;
-extern int interval_rest_time;
-extern int interval_rounds;
-extern bool interval_extended_rest;
-extern int interval_extended_rest_time;
-extern int interval_extended_rest_rounds;
-extern int interval_warm_up;
-extern int interval_cool_down;
-extern bool interval_rest_after_last_workout;
+typedef struct {
+	int active;
+	int rest_time;
+	int rounds;
+} ExtendedRest;
 
-void interval_read_persistent();
-void interval_write_persistent();
+typedef struct {
+	int workout_time;
+	int rest_time;
+	int rounds;
+	ExtendedRest extended_rest;
+	int warm_up;
+	int cool_down;
+	bool rest_after_last_workout;
+} IntervalSettings;
+
+extern IntervalSettings interval_settings;
+
+void interval_persist_read(int pkey);
+void interval_persist_write(int pkey);
+void interval_persist_migrate(int pkey, int version);
 
 char *interval_tostring(char *output, int length);
 int interval_get_total_time();
