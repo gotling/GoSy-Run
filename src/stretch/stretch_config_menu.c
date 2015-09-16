@@ -1,7 +1,8 @@
 #include <pebble.h>
-#include "stretch_config.h"
+#include "config.h"
 #include "../common/entry.h"
 #include "../common/tools.h"
+#include "../common/storage.h"
 
 #define NUM_MENU_SECTIONS 1
 #define NUM_FIRST_MENU_ITEMS 2
@@ -42,12 +43,12 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					format_time_long(subbuf, stretch_stretch_time);
+					format_time_long(subbuf, stretch_settings.time);
 					menu_cell_basic_draw(ctx, cell_layer, "Stretch", subbuf, NULL);
 					break;
 				case 1:
 					
-					format_time_long(subbuf, stretch_prepare_time);
+					format_time_long(subbuf, stretch_settings.prepare);
 					menu_cell_basic_draw(ctx, cell_layer, "Prepare", subbuf, NULL);
 					break;
 			}
@@ -61,10 +62,10 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 		case 0:
 			switch (cell_index->row) {
 				case 0:
-					entry_init_time("Stretch", &stretch_stretch_time);
+					entry_init_time("Stretch", &stretch_settings.time);
 					break;
 				case 1:
-					entry_init_number("Prepare", "%d seconds", 1, &stretch_prepare_time);
+					entry_init_number("Prepare", "%d seconds", 1, &stretch_settings.prepare);
 					break;
 			}
 			break;
@@ -95,7 +96,7 @@ static void window_load(Window *window) {
 }
 
 static void window_unload(Window *window) {
-	stretch_write_persistent();
+	persist_stretch_write();
 	
 	text_layer_destroy(header);
 	menu_layer_destroy(menu_layer);

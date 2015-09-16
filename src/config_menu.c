@@ -1,6 +1,6 @@
 #include <pebble.h>
 #include "stretch/stretch.h"
-#include "stretch/stretch_config.h"
+#include "stretch/config.h"
 #include "stretch/stretch_config_menu.h"
 #include "interval/interval.h"
 #include "interval/interval_config.h"
@@ -101,6 +101,8 @@ static void window_unload(Window *window) {
 	menu_layer_destroy(menu_layer);
 
 	callback_function();
+
+	window_destroy(window);
 }
 
 void config_menu_init(void (*callback)(void)) {

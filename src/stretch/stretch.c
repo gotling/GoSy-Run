@@ -1,5 +1,5 @@
 #include <pebble.h>
-#include "stretch_config.h"
+#include "config.h"
 #include "../common/tools.h"
 
 static struct StretchUi {
@@ -107,13 +107,13 @@ static void timer_callback(void *data) {
 	
 	if (state.round_time == 0) {
 		if (state.stretch == 0) {
-			state.round_time = stretch_stretch_time;
+			state.round_time = stretch_settings.time;
 			vibes_short_pulse();
 			text_layer_set_text(ui.top_text, "Stretch");
 			state.stretch = 1;
 		} else {
 			state.round++;
-			state.round_time = stretch_prepare_time;      
+			state.round_time = stretch_settings.prepare;      
 			vibes_long_pulse();
 			text_layer_set_text(ui.top_text, "Prepare");
 			state.stretch = 0;
@@ -162,7 +162,7 @@ static void reset() {
 	
 	state.running = 0;
 	state.round = 0;
-	state.round_time = stretch_prepare_time;
+	state.round_time = stretch_settings.prepare;
 	state.stretch = 0;
 	
 	update_ui();

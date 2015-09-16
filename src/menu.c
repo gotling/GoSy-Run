@@ -1,6 +1,6 @@
 #include <pebble.h>
 #include "stretch/stretch.h"
-#include "stretch/stretch_config.h"
+#include "stretch/config.h"
 #include "stretch/stretch_config_menu.h"
 #include "interval/interval.h"
 #include "interval/interval_config.h"
@@ -9,6 +9,7 @@
 #include "ladder/config.h"
 #include "ladder/config_menu.h"
 #include "common/tools.h"
+#include "common/storage.h"
 #include "config_menu.h"
 
 #define NUM_MENU_SECTIONS 0
@@ -133,9 +134,9 @@ void menu_init(void) {
 		.unload = window_unload,
 	});
 	
+	persist_read();
 	interval_read_persistent();
 	ladder_read_persistent();
-	stretch_read_persistent();
 	
 	const bool animated = true;
 	window_stack_push(window, animated);
