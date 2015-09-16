@@ -1,5 +1,5 @@
 #include <pebble.h>
-#include "interval_config.h"
+#include "config.h"
 #include "../common/tools.h"
 
 #define WORKOUT_TIME_PKEY 1

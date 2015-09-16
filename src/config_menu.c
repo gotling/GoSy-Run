@@ -1,10 +1,10 @@
 #include <pebble.h>
 #include "stretch/stretch.h"
 #include "stretch/config.h"
-#include "stretch/stretch_config_menu.h"
+#include "stretch/config_menu.h"
 #include "interval/interval.h"
-#include "interval/interval_config.h"
-#include "interval/interval_config_menu.h"
+#include "interval/config.h"
+#include "interval/config_menu.h"
 #include "ladder/ladder.h"
 #include "ladder/config.h"
 #include "ladder/config_menu.h"

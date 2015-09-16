@@ -1,5 +1,5 @@
 #include <pebble.h>
-#include "interval_config.h"
+#include "config.h"
 #include "../common/tools.h"
 
 enum _activity { WARM_UP, WORKOUT, REST, EXTENDE_REST, COOL_DOWN, FINISHED, PAUSED };
