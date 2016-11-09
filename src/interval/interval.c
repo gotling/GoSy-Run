@@ -14,7 +14,6 @@ static struct IntervalUi {
 } ui;
 
 static struct IntervalState {
-	AppTimer *timer;
 	bool active;
 	uint16_t round;
 	uint16_t round_time;
@@ -86,9 +85,7 @@ static void update_ui() {
 	}
 }
 
-static void timer_callback(void *data) {
-	state.timer = app_timer_register(1000, timer_callback, NULL);
-
+static void timer_callback(struct tm *tick_time, TimeUnits units_changed) {
 	// Switch between states 
 	if (state.round_time == 0) {
 		if (state.round < interval_settings.rounds || (interval_settings.rest_after_last_workout && state.activity == WORKOUT)) {
@@ -121,8 +118,7 @@ static void timer_callback(void *data) {
 				state.activity = FINISHED;
 				vibes_enqueue_custom_pattern(end_vibration);
 				state.active = false;
-				app_timer_cancel(state.timer);
-				state.timer = NULL;
+				tick_timer_service_unsubscribe();
 			}
 		}
 		
@@ -147,15 +143,13 @@ static void start() {
 	vibes_short_pulse();
 	
 	update_ui();
+	update_time_ui();
 	
-	timer_callback(NULL);
+	tick_timer_service_subscribe(SECOND_UNIT, &timer_callback);
 }
 
 static void pause() {
-	if (state.timer != NULL) {
-		app_timer_cancel(state.timer);
-		state.timer = NULL;
-	}
+	tick_timer_service_unsubscribe();
 	
 	state.active = false;
 	state.paused_activity = state.activity;
@@ -165,10 +159,7 @@ static void pause() {
 }
 
 static void reset() {
-	if (state.timer != NULL) {
-		app_timer_cancel(state.timer);
-		state.timer = NULL;
-	}
+	tick_timer_service_unsubscribe();
 	
 	if (interval_settings.warm_up) {
 		state.activity = WARM_UP;

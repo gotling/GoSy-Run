@@ -12,7 +12,6 @@ static struct StretchUi {
 } ui;
 
 static struct StretchState {
-	AppTimer *timer;
 	uint16_t running;
 	uint16_t round;
 	uint16_t round_time;
@@ -31,6 +30,13 @@ static struct StretchImages {
 } image;
 
 char buf[6];
+
+// Every second
+static void update_time_ui() {
+	snprintf(buf, 6, "%d", state.round_time);
+	text_layer_set_text(ui.time_text, buf);
+	state.round_time--;
+}
 
 static void update_ui() {
 	switch (state.round) {
@@ -96,15 +102,12 @@ static void update_ui() {
 			
 			vibes_enqueue_custom_pattern(end_vibration);
 			state.running = 0;
-			app_timer_cancel(state.timer);
-			state.timer = NULL;
+			tick_timer_service_unsubscribe();
 			break;
 	}
 }
 
-static void timer_callback(void *data) {
-	state.timer = app_timer_register(1000, timer_callback, NULL);
-	
+static void timer_callback(struct tm *tick_time, TimeUnits units_changed) {
 	if (state.round_time == 0) {
 		if (state.stretch == 0) {
 			state.round_time = stretch_settings.time;
@@ -123,9 +126,7 @@ static void timer_callback(void *data) {
 	}
 
 	if (state.running) {
-		snprintf(buf, 6, "%d", state.round_time);
-		text_layer_set_text(ui.time_text, buf);
-		state.round_time--;
+		update_time_ui();
 	}
 }
 
@@ -140,14 +141,14 @@ static void start() {
 		text_layer_set_text(ui.top_text, "Prepare");
 	}
 	
-	timer_callback(NULL);
+	update_ui();
+	update_time_ui();
+
+	tick_timer_service_subscribe(SECOND_UNIT, &timer_callback);
 }
 
 static void pause() {
-	if (state.timer != NULL) {
-		app_timer_cancel(state.timer);
-		state.timer = NULL;
-	}
+	tick_timer_service_unsubscribe();
 	
 	state.running = 0;
 	
@@ -155,10 +156,7 @@ static void pause() {
 }
 
 static void reset() {
-	if (state.timer != NULL) {
-		app_timer_cancel(state.timer);
-		state.timer = NULL;
-	}
+	tick_timer_service_unsubscribe();
 	
 	state.running = 0;
 	state.round = 0;
