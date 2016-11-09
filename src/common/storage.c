@@ -47,7 +47,7 @@ static void persist_migrate(void) {
     interval_persist_migrate(INTERVAL_PKEY, version);
     ladder_persist_migrate(LADDER_PKEY, version);
 
-    //persist_version_set(persist_current_version());
+    persist_version_set(persist_current_version());
 }
 
 void persist_stretch_write(void) {
