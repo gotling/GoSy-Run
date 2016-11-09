@@ -23,9 +23,15 @@ char *format_time_long(char *formated_time, int seconds) {
 
 void menu_cell_basic_draw_multiline(GContext* ctx, const Layer *cell_layer, char *title, char *subtitle, GBitmap *icon) {
 	GRect bounds = layer_get_frame(cell_layer);
+	
 	#ifdef PBL_BW
-	graphics_context_set_text_color	(ctx, GColorBlack);
+	if (menu_cell_layer_is_highlighted(cell_layer)) {
+		graphics_context_set_text_color	(ctx, GColorWhite);
+	} else {
+		graphics_context_set_text_color	(ctx, GColorBlack);
+	}
 	#endif
+
 	graphics_draw_text(ctx,
 		title,
 		fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD),
@@ -44,9 +50,15 @@ void menu_cell_basic_draw_multiline(GContext* ctx, const Layer *cell_layer, char
 
 void menu_cell_basic_draw_multiline_with_extra_title(GContext* ctx, const Layer *cell_layer, char *title, char *right_title, char *subtitle, GBitmap *icon) {
 	GRect bounds = layer_get_frame(cell_layer);
+	
 	#ifdef PBL_BW
-	graphics_context_set_text_color	(ctx, GColorBlack);
+	if (menu_cell_layer_is_highlighted(cell_layer)) {
+		graphics_context_set_text_color	(ctx, GColorWhite);
+	} else {
+		graphics_context_set_text_color	(ctx, GColorBlack);
+	}
 	#endif
+	
 	graphics_draw_text(ctx,
 		title,
 		fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD),
