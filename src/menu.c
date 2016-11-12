@@ -76,6 +76,8 @@ static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuI
 
 static void reload_menu(void) {
 	menu_layer_reload_data(menu_layer);
+
+	menu_layer_set_selected_index(menu_layer, (MenuIndex) {.section = 0, .row = 0}, MenuRowAlignTop, true);
 }
 
 static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
