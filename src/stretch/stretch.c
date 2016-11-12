@@ -18,18 +18,17 @@ static struct StretchState {
 	uint16_t stretch;
 } state;
 
-static struct StretchImages {
-	GBitmap *checkmark;
-	GBitmap *side_lunge;
-	GBitmap *quad;
-	GBitmap *hamstring_standing;
-	GBitmap *lateral_thigh;
-	GBitmap *inner_thigh;
-	GBitmap *chest_and_arm;
-	GBitmap *calf;
-} image;
+static GBitmap *image;
 
 char buf[6];
+
+static void load_image(uint32_t resource_id) {
+	if (image != NULL) {
+		gbitmap_destroy(image);
+	}
+	image = gbitmap_create_with_resource(resource_id);
+	bitmap_layer_set_bitmap(ui.image, image);
+}
 
 // Every second
 static void update_time_ui() {
@@ -39,55 +38,60 @@ static void update_time_ui() {
 }
 
 static void update_ui() {
+	if (!state.running) {
+		return;
+	}
+
 	switch (state.round) {
 		case 0:
+			load_image(RESOURCE_ID_IMAGE_SIDE_LUNGE_LEFT);
 			text_layer_set_text(ui.middle_text, "Left Side Lunge");
-			bitmap_layer_set_bitmap(ui.image, image.side_lunge);
 			break;
 		case 1:
 			text_layer_set_text(ui.middle_text, "Right Side Lunge");
 			break;
 		case 2:
+			load_image(RESOURCE_ID_IMAGE_HAMSTRING_STANDING);
 			text_layer_set_text(ui.middle_text, "Left Hamstring Standing");
-			bitmap_layer_set_bitmap(ui.image, image.hamstring_standing);
 			break;
 		case 3:
 			text_layer_set_text(ui.middle_text, "Right Hamstring Standing");
 			break;
 		case 4:
+			load_image(RESOURCE_ID_IMAGE_QUAD);
 			text_layer_set_text(ui.middle_text, "Left Quad");
-			bitmap_layer_set_bitmap(ui.image, image.quad);
 			break;
 		case 5:
 			text_layer_set_text(ui.middle_text, "Right Quad");
 			break;
 		case 6:
+			load_image(RESOURCE_ID_IMAGE_CHEST_AND_ARM);
 			text_layer_set_text(ui.middle_text, "Left Chest\nand Arm");
-			bitmap_layer_set_bitmap(ui.image, image.chest_and_arm);
 			break;
 		case 7:
 			text_layer_set_text(ui.middle_text, "Right Chest\nand Arm");
 			break;
 		case 8:
+			load_image(RESOURCE_ID_IMAGE_CALF);
 			text_layer_set_text(ui.middle_text, "Left Calf");
-			bitmap_layer_set_bitmap(ui.image, image.calf);
 			break;
 		case 9:
 			text_layer_set_text(ui.middle_text, "Right Calf");
 			break;
 		case 10:
+			load_image(RESOURCE_ID_IMAGE_LATERAL_THIGH);
 			text_layer_set_text(ui.middle_text, "Left\nLateral Thigh");
-			bitmap_layer_set_bitmap(ui.image, image.lateral_thigh);
 			break;
 		case 11:
 			text_layer_set_text(ui.middle_text, "Right\nLateral Thigh");
 			break;
 		case 12:
+			load_image(RESOURCE_ID_IMAGE_INNER_THIGH);
 			text_layer_set_text(ui.middle_text, "Inner Thigh");
-			bitmap_layer_set_bitmap(ui.image, image.inner_thigh);
 			break;
 			
 		default:
+			load_image(RESOURCE_ID_IMAGE_CHECKMARK);
 			text_layer_set_text(ui.top_text, "You are done!");
 			
 			layer_set_hidden(text_layer_get_layer(ui.middle_text), true);
@@ -98,8 +102,8 @@ static void update_ui() {
 			image_frame.origin.x = (ui.bounds.size.w / 2) - 32;
 			image_frame.origin.y = (ui.bounds.size.h / 2) - 32;
 			layer_set_frame(image_layer, image_frame);
-			bitmap_layer_set_bitmap(ui.image, image.checkmark);
 			
+
 			vibes_enqueue_custom_pattern(end_vibration);
 			state.running = 0;
 			tick_timer_service_unsubscribe();
@@ -197,18 +201,7 @@ static void window_load(Window *window) {
 	text_layer_set_font(ui.time_text, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
 	layer_add_child(window_layer, text_layer_get_layer(ui.time_text));
 	
-	image.checkmark = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CHECKMARK);
-	image.side_lunge = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SIDE_LUNGE_LEFT);
-	image.quad = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_QUAD);
-	image.hamstring_standing = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_HAMSTRING_STANDING);
-	image.lateral_thigh = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LATERAL_THIGH);
-	image.inner_thigh = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_INNER_THIGH);
-	image.chest_and_arm = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CHEST_AND_ARM);
-	image.calf = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CALF);
-	
-	GRect image_frame = gbitmap_get_bounds(image.checkmark);
-	image_frame.origin.x = 72;
-	image_frame.origin.y = 84;
+	GRect image_frame = (GRect) { .origin = { 72, 84 }, .size = { 64, 64 } };
 	ui.image = bitmap_layer_create(image_frame);
 	layer_add_child(window_layer, bitmap_layer_get_layer(ui.image));
 	layer_add_child(window_layer, text_layer_get_layer(ui.middle_text));
@@ -218,21 +211,16 @@ static void window_load(Window *window) {
 }
 
 static void window_unload(Window *window) {
+	reset();
+
 	text_layer_destroy(ui.top_text);
 	text_layer_destroy(ui.middle_text);
 	text_layer_destroy(ui.time_text);	
 	bitmap_layer_destroy(ui.image);
 	
-	gbitmap_destroy(image.checkmark);
-	gbitmap_destroy(image.side_lunge);
-	gbitmap_destroy(image.quad);
-	gbitmap_destroy(image.hamstring_standing);
-	gbitmap_destroy(image.lateral_thigh);
-	gbitmap_destroy(image.inner_thigh);
-	gbitmap_destroy(image.chest_and_arm);
-	gbitmap_destroy(image.calf);
+	gbitmap_destroy(image);
+	image = NULL;
 	
-	reset();
 	window_destroy(window);
 }
 
