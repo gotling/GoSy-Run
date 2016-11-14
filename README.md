@@ -14,13 +14,15 @@ Ascending, Descending, Asc-Desc and Desc-Asc
 ### Stretch timer
 With 8 stretch types
 
-Planned
-----------------
-* Training Programs
-* Random Fartlek (speed play)
-
 History
 ----------------
+1.6
+* Improved timer accuracy
+* Restructured menu
+* Remade data storage
+* Decrese memory usage by loading images only when needed
+* Built with SDK 4
+
 1.5
 * Add warm up and cool down to Interval timer
 * Add setting to rest after last workout in Interval timer
