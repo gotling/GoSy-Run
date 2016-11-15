@@ -29,7 +29,9 @@ static struct IntervalImages {
 static char buf[12];
 
 static void update_time() {
-	state.round_time--;
+	if (state.round_time > 0) {
+		state.round_time--;
+	}
 	state.total_time++;
 }
 
@@ -88,12 +90,12 @@ static void update_ui() {
 static void timer_callback(struct tm *tick_time, TimeUnits units_changed) {
 	// Switch between states 
 	if (state.round_time == 0) {
-		if (state.round < interval_settings.rounds || (interval_settings.rest_after_last_workout && state.activity == WORKOUT)) {
+		if (state.round < interval_settings.rounds || (interval_settings.rest_after_last_workout && interval_settings.rest_time != 0 && state.activity == WORKOUT)) {
 			if (state.activity == WARM_UP) {
 				state.activity = WORKOUT;
 				state.round_time = interval_settings.workout_time;
 				vibes_long_pulse();
-			} else if (state.activity == WORKOUT) {
+			} else if (state.activity == WORKOUT && interval_settings.rest_time != 0) {
 				if (interval_settings.extended_rest.active && state.round % interval_settings.extended_rest.rounds == 0) {
 					state.activity = EXTENDE_REST;
 					state.round_time = interval_settings.extended_rest.rest_time;

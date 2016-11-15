@@ -90,13 +90,17 @@ char *interval_tostring(char *output, int length) {
 	format_time(rest_time_text, interval_settings.rest_time);
 	
 	if (interval_settings.rounds == 1) {
-		if (interval_settings.rest_after_last_workout) {
+		if (interval_settings.rest_after_last_workout && interval_settings.rest_time != 0) {
 			snprintf(output, length, "%s+%s", workout_time_text, rest_time_text);
 		} else {
 			snprintf(output, length, "%s", workout_time_text);
 		}
 	} else {
-		snprintf(output, length, "%s+%s * %d", workout_time_text, rest_time_text, interval_settings.rounds);
+		if (interval_settings.rest_time == 0) {
+			snprintf(output, length, "%s * %d", workout_time_text, interval_settings.rounds);
+		} else {
+			snprintf(output, length, "%s+%s * %d", workout_time_text, rest_time_text, interval_settings.rounds);
+		}
 	}
 
 	if (interval_settings.extended_rest.active) {

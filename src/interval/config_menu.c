@@ -123,7 +123,7 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 					entry_init_time("Workout", &interval_settings.workout_time);
 					break;
 				case 1:
-					entry_init_time("Recover", &interval_settings.rest_time);
+					entry_init_time_zero_allowed("Recover", &interval_settings.rest_time);
 					break;
 				case 2:
 					entry_init_number("Rounds", "%d rounds", 1, &interval_settings.rounds);
