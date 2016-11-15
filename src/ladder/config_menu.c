@@ -119,7 +119,7 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 					entry_init_time_step("Longest", ladder_settings.step_time, &ladder_settings.max_time);
 					break;
 				case 3:
-					entry_init_time("Recover", &ladder_settings.slow_time);
+					entry_init_time_zero_allowed("Recover", &ladder_settings.slow_time);
 					break;
 				case 4:
 					entry_init_number("Repeat", "%d times", 1, &ladder_settings.rounds);

@@ -43,7 +43,10 @@ static void set_up() {
 }
 
 static void update_time() {
-	state.round_time--;
+	if (state.round_time > 0) {
+		state.round_time--;
+	}
+
 	state.total_time++;
 }
 
@@ -96,15 +99,10 @@ static void timer_callback(struct tm *tick_time, TimeUnits units_changed) {
 	// Switch between states 
 	if (state.round_time == 0) {
 		if (state.round < ladder_settings.rounds || round_iterator < (rounds - 1)) {
-			if (state.activity == FAST) {
-				/*if (interval_extended_slow && state.round % interval_extended_slow_rounds == 0) {
-					state.activity = EXTENDED_SLOW;
-					state.round_time = interval_extended_slow_time;
-				} else { */
-					state.activity = SLOW;
-					state.round_time = ladder_settings.slow_time;
-				//}
-				
+			if (state.activity == FAST && ladder_settings.slow_time != 0) {
+				state.activity = SLOW;
+				state.round_time = ladder_settings.slow_time;
+	
 				vibes_long_pulse();
 			} else {
 				state.activity = FAST;
