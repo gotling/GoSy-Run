@@ -44,7 +44,9 @@ static void update_ui() {
 }
 
 static int get_time_step(bool up) {
-	if ((up && *state.entry <= 55) || (!up && *state.entry <= 60)) {
+	if ((up && *state.entry <= 29) || (!up && *state.entry <= 30)) {
+		return 1;
+	} else if ((up && *state.entry <= 55) || (!up && *state.entry <= 60)) {
 		return 5;
 	} else if((up && *state.entry <=170) || (!up && *state.entry <=180)) {
 		return 10;
