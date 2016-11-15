@@ -65,7 +65,7 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 					entry_init_time("Stretch", &stretch_settings.time);
 					break;
 				case 1:
-					entry_init_number("Prepare", "%d seconds", 1, &stretch_settings.prepare);
+					entry_init_time_zero_allowed("Prepare", &stretch_settings.prepare);
 					break;
 			}
 			break;

@@ -54,11 +54,15 @@ void stretch_persist_migrate(int pkey, int version) {
 char *stretch_tostring(char *output, int length) {
 	char stretch_time_text[7];
 	format_time(stretch_time_text, stretch_settings.time);
-	
-	char prepare_time_text[7];
-	format_time(prepare_time_text, stretch_settings.prepare);
-	
-	snprintf(output, length, "%s+%s", stretch_time_text, prepare_time_text);
+
+	if (stretch_settings.prepare > 0) {
+		char prepare_time_text[7];
+		format_time(prepare_time_text, stretch_settings.prepare);
+		
+		snprintf(output, length, "%s+%s * %d", stretch_time_text, prepare_time_text, SETS);
+	} else {
+		snprintf(output, length, "%s * %d", stretch_time_text, SETS);
+	}
 	
 	return output;
 }

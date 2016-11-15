@@ -34,7 +34,9 @@ static void load_image(uint32_t resource_id) {
 static void update_time_ui() {
 	snprintf(buf, 6, "%d", state.round_time);
 	text_layer_set_text(ui.time_text, buf);
-	state.round_time--;
+	if (state.round_time > 0) {
+		state.round_time--;
+	}
 }
 
 static void update_ui() {
@@ -113,20 +115,24 @@ static void update_ui() {
 
 static void timer_callback(struct tm *tick_time, TimeUnits units_changed) {
 	if (state.round_time == 0) {
-		if (state.stretch == 0) {
-			state.round_time = stretch_settings.time;
-			vibes_short_pulse();
-			text_layer_set_text(ui.top_text, "Stretch");
-			state.stretch = 1;
-		} else {
+		if (state.stretch && stretch_settings.prepare != 0) {
 			state.round++;
 			state.round_time = stretch_settings.prepare;      
 			vibes_long_pulse();
 			text_layer_set_text(ui.top_text, "Prepare");
 			state.stretch = 0;
-			
-			update_ui();
+		} else {
+			if (stretch_settings.prepare == 0) {
+				state.round++;
+			}
+
+			state.round_time = stretch_settings.time;
+			vibes_short_pulse();
+			text_layer_set_text(ui.top_text, "Stretch");
+			state.stretch = 1;
 		}
+
+		update_ui();
 	}
 
 	if (state.running) {
@@ -164,9 +170,15 @@ static void reset() {
 	
 	state.running = 0;
 	state.round = 0;
-	state.round_time = stretch_settings.prepare;
-	state.stretch = 0;
-	
+
+	if (stretch_settings.prepare == 0) {
+		state.round_time = stretch_settings.time;
+		state.stretch = 1;
+	} else {
+		state.round_time = stretch_settings.prepare;
+		state.stretch = 0;
+	}
+
 	update_ui();
 }
 
