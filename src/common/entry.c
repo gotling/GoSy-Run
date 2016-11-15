@@ -44,14 +44,12 @@ static void update_ui() {
 }
 
 static int get_time_step(bool up) {
-	if ((up && *state.entry <= 29) || (!up && *state.entry <= 30)) {
+	if ((up && *state.entry <= 59) || (!up && *state.entry <= 60)) {
 		return 1;
-	} else if ((up && *state.entry <= 55) || (!up && *state.entry <= 60)) {
+	} else if((up && *state.entry <=175) || (!up && *state.entry <=180)) {
 		return 5;
-	} else if((up && *state.entry <=170) || (!up && *state.entry <=180)) {
+	} else if ((up && *state.entry <= 590) || (!up && *state.entry <= 600)) {
 		return 10;
-	} else if ((up && *state.entry <= 570) || (!up && *state.entry <= 600)) {
-		return 30;
 	} else {
 		return 60;
 	}

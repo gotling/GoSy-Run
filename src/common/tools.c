@@ -12,10 +12,16 @@ char *format_time(char *formated_time, int seconds) {
 }
 
 char *format_time_long(char *formated_time, int seconds) {
-	if (seconds < 60) {
+	if (seconds == 1) {
+		snprintf(formated_time, 9, "1 second");
+	} else if (seconds < 60) {
 		snprintf(formated_time, 11, "%d seconds", seconds);
+	} else if (seconds == 60) {
+		snprintf(formated_time, 9, "1 minute");
+	} else if (seconds > 60 && seconds % 60 == 0) {
+		snprintf(formated_time, 12, "%d minutes", seconds / 60);
 	} else {
-		snprintf(formated_time, 7, "%d:%02d", seconds / 60, (seconds % 60));
+		snprintf(formated_time, 8, "%d:%02d", seconds / 60, (seconds % 60));
 	}
 	
 	return formated_time;
