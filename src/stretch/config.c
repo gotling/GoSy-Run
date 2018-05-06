@@ -3,6 +3,7 @@
 #include "common/tools.h"
 #include "common/storage.h"
 
+#define STRETCH_PROGRAM_DEFAULT true
 #define STRETCH_TIME_DEFAULT 20
 #define PREPARE_TIME_DEFAULT 3
 
@@ -24,6 +25,7 @@ void stretch_persist_write(int pkey) {
 }
 
 static void stretch_persist_reset(int pkey) {
+	stretch_settings.program = STRETCH_PROGRAM_DEFAULT;
 	stretch_settings.time = STRETCH_TIME_DEFAULT;
 	stretch_settings.prepare = PREPARE_TIME_DEFAULT;
 	
@@ -55,7 +57,16 @@ char *stretch_tostring(char *output, int length) {
 	char stretch_time_text[7];
 	format_time(stretch_time_text, stretch_settings.time);
 
-	if (stretch_settings.prepare > 0) {
+	if (!stretch_settings.program) {
+		if (stretch_settings.prepare > 0) {
+			char prepare_time_text[7];
+			format_time(prepare_time_text, stretch_settings.prepare);
+			
+			snprintf(output, length, "%s+%s * ∞", stretch_time_text, prepare_time_text);
+		} else {
+			snprintf(output, length, "%s * ∞", stretch_time_text);
+		}
+	} else if (stretch_settings.prepare > 0) {
 		char prepare_time_text[7];
 		format_time(prepare_time_text, stretch_settings.prepare);
 		
@@ -68,6 +79,10 @@ char *stretch_tostring(char *output, int length) {
 }
 
 int stretch_get_total_time() {
+	if (!stretch_settings.program) {
+		return -1;
+	}
+	
 	int total_time = 0;
 	
 	total_time += stretch_settings.time;

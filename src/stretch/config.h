@@ -1,6 +1,7 @@
 #pragma once
 
 typedef struct {
+	bool program;
 	int time;
 	int prepare;
 } StretchSettings;

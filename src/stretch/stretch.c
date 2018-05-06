@@ -44,6 +44,10 @@ static void update_ui() {
 		return;
 	}
 
+	if (!stretch_settings.program) {
+		return;
+	}
+
 	switch (state.round) {
 		case 0:
 			load_image(RESOURCE_ID_IMAGE_SIDE_LUNGE_LEFT);
@@ -170,6 +174,16 @@ static void reset() {
 	
 	state.running = 0;
 	state.round = 0;
+
+	if (!stretch_settings.program) {
+		layer_set_hidden(text_layer_get_layer(ui.middle_text), true);
+
+		Layer *image_layer = text_layer_get_layer(ui.time_text);
+		GRect image_frame = layer_get_frame(image_layer);
+		image_frame.origin.x = (ui.bounds.size.w / 2) - 40;
+		image_frame.origin.y = (ui.bounds.size.h / 2) - 25;
+		layer_set_frame(image_layer, image_frame);
+	}
 
 	if (stretch_settings.prepare == 0) {
 		state.round_time = stretch_settings.time;
