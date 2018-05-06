@@ -2,7 +2,9 @@
 #include "tools.h"
 
 char *format_time(char *formated_time, int seconds) {
-	if (seconds < 60) {
+	if (seconds < 0) {
+		snprintf(formated_time, 5, "∞");
+	} else if (seconds < 60) {
 		snprintf(formated_time, 3, "%d", seconds);
 	} else {
 		snprintf(formated_time, 7, "%d:%02d", seconds / 60, (seconds % 60));
